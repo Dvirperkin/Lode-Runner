@@ -1,0 +1,382 @@
+@startuml
+class GameController {
+public:
+    GameController();
+    void Run();
+
+private:
+    std::vector<std::unique_ptr<Window>> m_screens;
+    enum ScreenType_t m_currentScreen;
+}
+
+abstract class Window {
+public:
+    Window();
+    virtual enum ScreenType_t display(sf::RenderWindow &) = 0;
+    virtual void draw(sf::RenderWindow &) = 0;
+    virtual void Music() = 0;
+
+private:
+}
+
+class MainMenu{
+public:
+    MainMenu();
+    virtual enum ScreenType_t display(sf::RenderWindow &) override;
+    virtual void draw(sf::RenderWindow &) override;
+    virtual void Music() override;
+
+private:
+    std::vector<MenuButton> m_menu;
+    int m_lastRectangleBold;
+    sf::Music m_backGroundMusic;
+    //sf::Text m_text;
+
+    void handleMouseMove(sf::RenderWindow & Window, const sf::Vector2f & location);
+}
+
+class MenuButton {
+public:
+    MenuButton(int);
+
+    void draw(sf::RenderWindow &);
+    bool checkPressed(const sf::Vector2f &);
+    void setOutlineThickness(int);
+
+private:
+    sf::RectangleShape m_frame;
+    sf::Text m_text;
+
+}
+
+class Stage{
+public:
+    Stage();
+    virtual enum ScreenType_t display(sf::RenderWindow &) override;
+    virtual void draw(sf::RenderWindow &) override;
+    virtual void Music() override;
+
+
+private:
+    StageDetails m_stageDetails;
+    std::fstream m_levelFile;
+    sf::Music m_backGroundMusic;
+    Player m_player;
+    std::vector<std::unique_ptr<Enemy>> m_enemies;
+    std::vector<std::string> m_map;
+    std::vector<std::unique_ptr<StaticObject>> m_staticObjects;
+    sf::Vector2i m_stageSize;
+    sf::Clock m_clock;
+    Textures m_Textures;
+    int m_stageNumber = 0;
+    int m_coin;
+
+    void createEnemy(const int row, const int col);
+    void drawEnemies(sf::RenderWindow &) const;
+    void drawPlayer(sf::RenderWindow &) const;
+    void drawStaticObjects(sf::RenderWindow &) const;
+}
+
+class StageDetails {
+public:
+    StageDetails() = default;
+    StageDetails(sf::Vector2i &, int &, int &);
+
+private:
+    sf::Clock m_timer;
+    int m_score;
+    int m_lives;
+}
+
+class StageConstruction{
+public:
+    StageConstruction();
+    virtual enum ScreenType_t display(sf::RenderWindow &) override;
+    virtual void draw(sf::RenderWindow &) override;
+    virtual void Music() override;
+}
+
+Window <-- MainMenu
+Window <-- Stage
+Window <-- StageConstruction
+
+abstract class GameObject {
+
+public:
+    GameObject() = default;
+    GameObject(const sf::Vector2i & , const sf::Texture &);
+    const sf::Vector2i & getPosition () const;
+    virtual void draw (sf::RenderWindow &) const;
+    void setPosition(const float &, const sf::Vector2f & , const sf::Vector2f &);
+
+
+private:
+    sf::Vector2i m_position;
+    sf::Sprite m_sprite;
+}
+
+abstract class MovingObject{
+
+public:
+    MovingObject() = default;
+    MovingObject(const sf::Vector2i & , const sf::Texture &);
+    virtual void move(const float &) = 0;
+    virtual void setDirection(const sf::Keyboard::Key &);
+    const sf::Vector2f getDirection () const;
+    const sf::Vector2f getScale () const;
+
+
+private:
+    sf::Vector2f m_direction;
+    sf::Vector2f m_scale; //used to reflect the sprite with setScale.
+}
+
+abstract class StaticObject{
+
+public:
+    StaticObject() = default;
+    StaticObject(const sf::Vector2i & , const sf::Texture &);
+
+private:
+}
+
+GameObject <-- MovingObject
+GameObject <-- StaticObject
+
+abstract class SpecialObject{
+public:
+    SpecialObject() = default;
+    SpecialObject(const sf::Vector2i & , const sf::Texture &);
+
+    virtual void activate() = 0;
+
+private:
+}
+
+StaticObject <-- SpecialObject
+
+class Player{
+
+public:
+    Player() = default;
+    Player(const sf::Vector2i & , const sf::Texture &);
+    virtual void move(const float &) override;
+
+private:
+    int m_lives = 3;
+
+}
+
+abstract class Enemy{
+
+public:
+    Enemy() = default;
+    Enemy(const sf::Vector2i & , const sf::Texture &);
+
+private:
+
+}
+
+MovingObject <-- Player
+MovingObject <-- Enemy
+
+class StupidEnemy{
+public:
+
+    StupidEnemy(const sf::Vector2i & , const sf::Texture &);
+    virtual void move(const float &) override;
+
+private:
+}
+
+class RandEnemy{
+public:
+
+    RandEnemy(const sf::Vector2i & , const sf::Texture &);
+    virtual void move(const float &) override;
+
+private:
+}
+
+class SmartEnemy{
+public:
+
+    SmartEnemy(const sf::Vector2i & , const sf::Texture &);
+    virtual void move(const float &) override;
+
+private:
+}
+
+Enemy <-- StupidEnemy
+Enemy <-- RandEnemy
+Enemy <-- SmartEnemy
+
+abstract class Gift{
+
+public:
+    Gift() = default;
+    Gift(const sf::Vector2i & , const sf::Texture &);
+    virtual void activate() = 0
+private:
+
+}
+
+class LiveGift{
+
+public:
+    virtual void activate() override;
+
+private:
+
+}
+
+class ScoreGift{
+
+public:
+    virtual void activate() override;
+
+private:
+
+}
+
+class TimeGift{
+
+public:
+    virtual void activate() override;
+
+private:
+}
+
+class EnemyGift{
+
+public:
+    virtual void activate() override;
+
+private:
+
+}
+
+Gift <-- LiveGift
+Gift <-- ScoreGift
+Gift <-- TimeGift
+Gift <-- EnemyGift
+
+class Coin{
+
+public:
+    Coin() = default;
+    Coin(const sf::Vector2i & , const sf::Texture &);
+    virtual void activate() override;
+
+private:
+
+}
+
+class Ladder{
+
+public:
+    Ladder() = default;
+    Ladder(const sf::Vector2i & , const sf::Texture &);
+
+private:
+
+}
+
+class Pole{
+
+public:
+    Pole() = default;
+    Pole(const sf::Vector2i & , const sf::Texture &);
+
+private:
+}
+
+class Wall{
+
+public:
+    Wall() = default;
+    Wall(const sf::Vector2i & , const sf::Texture &);
+
+private:
+}
+
+SpecialObject <-- Gift
+SpecialObject <-- Coin
+StaticObject <-- Ladder
+StaticObject <-- Pole
+StaticObject <-- Wall
+
+class Textures {
+public:
+    Textures();
+    const sf::Texture& getPlayerTexture() const;
+    const sf::Texture& getEnemyTexture() const;
+    const sf::Texture& getWallTexture() const;
+    const sf::Texture& getCoinTexture() const;
+    const sf::Texture& getLadderTexture() const;
+    const sf::Texture& getPoleTexture() const;
+    const sf::Texture& getGiftTexture() const;
+
+private:
+    std::vector<sf::Texture> m_textures;
+}
+
+class Sounds {
+
+public:
+    Sounds();
+    const sf::SoundBuffer & getCollisionEnemySound () const;
+    const sf::SoundBuffer & getCollisionCoinSound () const;
+    const sf::SoundBuffer & getCantMoveSound () const;
+    const sf::SoundBuffer & getFinishedLevelSound () const;
+    const sf::SoundBuffer & getLowTimeSound () const;
+
+private:
+    std::vector<std::unique_ptr<std::string>> m_music;
+    std::vector<sf::SoundBuffer> m_sounds;
+}
+
+enum ScreenType_t
+{
+MAIN_MENU,
+STAGE,
+STAGE_CONSTRUCTION,
+EXIT
+}
+
+enum Sounds_t
+{
+COLLISION_ENEMY,
+COLLISION_COIN,
+CANT_MOVE,
+FINISHED_LEVEL,
+LOW_TIME
+}
+
+enum Textures_t
+{
+PLAYER,
+ENEMY,
+WALL,
+COIN,
+LADDER,
+POLE,
+GIFT
+}
+
+enum EnemyType_t
+{
+STUPID_ENEMY,
+RAND_ENEMY,
+SMART_ENEMY
+}
+
+enum GiftType_t
+{
+LIVE_GIFT,
+SCORE_GIFT,
+TIME_GIFT,
+ENEMY_GIFT
+}
+
+@enduml

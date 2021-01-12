@@ -1,0 +1,1 @@
+target_include_directories (Project_Dvir_Meir_Perkin_Ilan_Ben_Zeev PRIVATE ${CMAKE_CURRENT_LIST_DIR})
