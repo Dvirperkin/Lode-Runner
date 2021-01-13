@@ -13,7 +13,6 @@
 
 class RandEnemy : public Enemy {
 public:
-
     RandEnemy(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
     virtual sf::Vector2f move(const float &) override;
     virtual void gravity(const float & ) override;
@@ -21,8 +20,8 @@ public:
     using MovingObject::handleCollision;
 
     //---Collision Function Section---
-    virtual void handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) override;
-    virtual void handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) override;
+    virtual void handleCollision(GameObject &, const sf::Vector2f &) override;
+    virtual void handleCollision(Player &, const sf::Vector2f &) override;
 
 private:
 };
