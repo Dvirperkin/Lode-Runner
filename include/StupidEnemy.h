@@ -21,9 +21,9 @@ public:
     using MovingObject::handleCollision;
 
     //---Collision Function Section---
-    virtual void handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) override;
-    virtual void handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) override;
-    virtual void handleCollision(Wall &gameObject, const sf::Vector2f &keyPressed) override;
+    virtual void handleCollision(GameObject &, const sf::Vector2f &) override;
+    virtual void handleCollision(Player &, const sf::Vector2f &) override;
+    virtual void handleCollision(Wall &, const sf::Vector2f &) override;
 
 private:
     bool m_direction;

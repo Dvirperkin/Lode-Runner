@@ -3,10 +3,10 @@
 
 class StageDetails {
 public:
-    StageDetails() = default;
-    StageDetails(sf::Vector2i &, int &, int &);
+    StageDetails();
     void draw() const;
-    void setTimer();
+    void setStageNumber(const int);
+    void setTimer(const int);
     void incCoin();
     void decCoin();
 

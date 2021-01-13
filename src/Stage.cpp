@@ -76,6 +76,9 @@ void Stage::initializingStage()
 
     m_levelFile.get();
 
+    m_stageDetails.setTimer(timer);
+    m_stageDetails.setStageNumber(START_LEVEL);
+
     for(int row = 0; row < stageSize.y; row++)
     {
         getline(m_levelFile,line);
@@ -87,14 +90,12 @@ void Stage::initializingStage()
             {
                 case PLAYER_SYMBOL:
                     m_player = Player(sf::Vector2f(col , row), m_Textures.getPlayerTexture(), stageSize);
-                    m_player.initPosition(row, col, stageSize);
                     m_player.levelUP();
                     m_player.changeSize();
                     break;
 
                 case ENEMY_SYMBOL:
                     createEnemy(row, col, stageSize);
-                    m_enemies[m_enemies.size() - 1]->initPosition(row, col, stageSize);
                     m_enemies[m_enemies.size() - 1]->changeSize();
                     break;
 
@@ -119,8 +120,6 @@ void Stage::initializingStage()
                     createGift(row, col, stageSize);
                     break;
             }
-            if(m_map[row][col] != PLAYER_SYMBOL && m_map[row][col] != ENEMY_SYMBOL && m_map[row][col] != EMPTY)
-                m_staticObjects[m_staticObjects.size() - 1]->initPosition(row, col, stageSize);
         }
     }
 }
@@ -128,9 +127,6 @@ void Stage::initializingStage()
 void Stage::createEnemy(const int row, const int col, const sf::Vector2i & stageSize){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
-
-    enemy = RAND_ENEMY;
-
 
     switch(enemy)
     {
@@ -167,7 +163,7 @@ void Stage::createGift(const int row, const int col, const sf::Vector2i & stageS
             break;
 
         case ENEMY_GIFT:
-            m_staticObjects.push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize));
+            m_staticObjects.push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize, *this));
             break;
     }
 }
@@ -226,6 +222,5 @@ void Stage::drawStaticObjects(sf::RenderWindow &window) const
 {
     for(int index = 0; index < m_staticObjects.size(); index++)
         m_staticObjects[index]->draw(window);
-
 }
 //=============================================================================

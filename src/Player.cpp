@@ -1,8 +1,12 @@
 #include "Player.h"
 #include <iostream>
 
+Player::Player() {
+
+}
+//=============================================================================
 Player::Player(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
- : MovingObject(location , texture, stageSize) , m_lives(LIVE), m_score(0), m_level(0)
+ : MovingObject(location , texture, stageSize) , m_lives(LIVE), m_score(0), m_level(START_LEVEL)
 {
 }
 //===================================================================
