@@ -18,4 +18,5 @@ public:
 private:
     std::vector<std::unique_ptr<Window>> m_screens;
     enum ScreenType_t m_currentScreen;
+    sf::Font m_font;
 };

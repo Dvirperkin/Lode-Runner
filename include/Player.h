@@ -16,9 +16,8 @@
 class Player : public MovingObject {
 public:
 
-    Player();
+    Player() = default;
     Player(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
-
     virtual sf::Vector2f move(const float &) override;
 
     int getLive() const;
@@ -30,13 +29,13 @@ public:
     using MovingObject::handleCollision;
 
     //---Collision Function Section---
-    virtual void handleCollision(GameObject &, const sf::Vector2f &) override;
-    virtual void handleCollision(StupidEnemy &, const sf::Vector2f &) override;
-    virtual void handleCollision(RandEnemy &, const sf::Vector2f &) override;
-    virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) override;
-    virtual void handleCollision(Coin &, const sf::Vector2f &) override;
-    virtual void handleCollision(LiveGift &, const sf::Vector2f &) override;
-    virtual void handleCollision(ScoreGift &, const sf::Vector2f &) override;
+    virtual void handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) override;
+    virtual void handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) override;
+    virtual void handleCollision(RandEnemy &gameObject, const sf::Vector2f &) override;
+    virtual void handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) override;
+    virtual void handleCollision(Coin &gameObject, const sf::Vector2f &) override;
+    virtual void handleCollision(LiveGift &gameObject, const sf::Vector2f &) override;
+    virtual void handleCollision(ScoreGift &gameObject, const sf::Vector2f &) override;
     virtual void handleCollision(TimeGift &, const sf::Vector2f &) override;
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) override;
 

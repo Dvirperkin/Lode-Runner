@@ -17,9 +17,10 @@ class EnemyGift;
 class GameObject {
 
 public:
+    GameObject() = default;
     GameObject(const sf::Vector2f &, const sf::Texture &, const sf::Vector2i &);
 
-    void initPosition(const sf::Vector2f &, const sf::Vector2i &);
+    void initPosition(int, int, sf::Vector2i);
     virtual void draw (sf::RenderWindow &) const;
 
     const sf::Vector2f & getPosition () const;
@@ -39,17 +40,17 @@ public:
 
     //---Collision Function Section---
     bool checkCollision(const sf::FloatRect &);
-    virtual void handleCollision(GameObject &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(Player &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(StupidEnemy &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(RandEnemy &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(Coin &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(Wall &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(Pole &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(Ladder &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(LiveGift &, const sf::Vector2f &) = 0;
-    virtual void handleCollision(ScoreGift &, const sf::Vector2f &) = 0;
+    virtual void handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) = 0;
+    virtual void handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) = 0;
+    virtual void handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(RandEnemy &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(Coin &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(Wall &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(Pole &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(Ladder &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(LiveGift &gameObject, const sf::Vector2f &) = 0;
+    virtual void handleCollision(ScoreGift &gameObject, const sf::Vector2f &) = 0;
     virtual void handleCollision(TimeGift &, const sf::Vector2f &) = 0;
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) = 0;
 

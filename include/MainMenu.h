@@ -14,5 +14,5 @@ private:
     int m_lastRectangleBold;
     sf::Music m_backGroundMusic;
 
-    void handleMouseMove(sf::RenderWindow & , const sf::Vector2f & );
+    void handleMouseMove(sf::RenderWindow & Window, const sf::Vector2f & location);
 };

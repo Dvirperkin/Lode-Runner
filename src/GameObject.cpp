@@ -2,8 +2,8 @@
 #include "Macros.h"
 #include <iostream>
 
-GameObject::GameObject(const sf::Vector2f & position, const sf::Texture & texture, const sf::Vector2i & stageSize)
-        : m_position(position), m_sprite(texture), m_isDisposed(false), m_lastReflection(REFLECTION_RIGHT)
+GameObject::GameObject(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
+        : m_position(location) , m_sprite(texture), m_isDisposed(false), m_lastReflection(REFLECTION_RIGHT)
 {
     //Get the default size of the object to set the correct origin.
     m_objectSize.x = m_sprite.getTexture()->getSize().x;
@@ -16,8 +16,6 @@ GameObject::GameObject(const sf::Vector2f & position, const sf::Texture & textur
     //Get the new size of the object after resize it according to the size of the stage.
     m_objectSize.x = m_sprite.getScale().x * m_sprite.getTexture()->getSize().x;
     m_objectSize.y = m_sprite.getScale().y *  m_sprite.getTexture()->getSize().y;
-
-    initPosition(position, stageSize);
 }
 //=============================================================================
 sf::Vector2f GameObject::getCenter() const {
@@ -46,9 +44,9 @@ void GameObject::draw(sf::RenderWindow &window) const
     window.draw(m_sprite);
 }
 //=============================================================================
-void GameObject::initPosition(const sf::Vector2f & position, const sf::Vector2i & stageSize) {
-    m_position.x = (position.x * WINDOW_WIDTH / stageSize.x) + WINDOW_WIDTH / (stageSize.x * 2);
-    m_position.y = (position.y * WINDOW_HEIGHT / stageSize.y) + WINDOW_HEIGHT / (stageSize.y * 2);
+void GameObject::initPosition(int height, int width, sf::Vector2i stageSize) {
+    m_position.x = (width * WINDOW_WIDTH / stageSize.x) + WINDOW_WIDTH / (stageSize.x * 2);
+    m_position.y = (height * WINDOW_HEIGHT / stageSize.y) + WINDOW_HEIGHT / (stageSize.y * 2);
     m_sprite.setPosition(m_position);
     m_lastPosition = m_sprite.getPosition();
 }
