@@ -33,7 +33,7 @@ private:
     Player m_player;
     std::vector<std::unique_ptr<Enemy>> m_enemies;
     std::vector<std::string> m_map;
-    std::vector<std::unique_ptr<StaticObject>> m_staticObjects;
+    std::vector<std::vector<std::unique_ptr<StaticObject>>> m_staticObjects;
     sf::Vector2i m_stageSize;
     sf::Clock m_clock;
     Textures m_Textures;
