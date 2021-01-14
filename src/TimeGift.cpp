@@ -1,11 +1,12 @@
 #include "TimeGift.h"
-
-TimeGift::TimeGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
- : Gift(location, texture, stageSize)
- {}
+#include "Player.h"
+TimeGift::TimeGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize, StageDetails & stageDetails)
+ : Gift(location, texture, stageSize){
+    m_stageDetails = &stageDetails;
+ }
 //=============================================================================
 void TimeGift::activate() {
-
+    m_stageDetails->addTime();
 }
 //=============================================================================
 void TimeGift::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
@@ -13,7 +14,9 @@ void TimeGift::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPr
 }
 //=============================================================================
 void TimeGift::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
-
+    activate();
+    isDisposed();
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
 void TimeGift::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {

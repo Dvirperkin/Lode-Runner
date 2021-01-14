@@ -1,10 +1,14 @@
 #include "ScoreGift.h"
+#include "Player.h"
 
-ScoreGift::ScoreGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
- : Gift(location, texture, stageSize){}
+ScoreGift::ScoreGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize, Player & player)
+ : Gift(location, texture, stageSize){
+    m_player = &player;
+ }
 //=============================================================================
 void ScoreGift::activate() {
-
+    isDisposed();
+    m_player->addScore(GIFT_SCORE);
 }
 //=============================================================================
 void ScoreGift::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
@@ -12,7 +16,8 @@ void ScoreGift::handleCollision(GameObject &gameObject, const sf::Vector2f &keyP
 }
 //=============================================================================
 void ScoreGift::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
-
+    activate();
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
 void ScoreGift::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {

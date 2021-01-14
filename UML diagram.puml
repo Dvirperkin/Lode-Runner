@@ -72,8 +72,7 @@ private:
     int m_coin;
 
     void createEnemy(const int row, const int col);
-    void drawEnemies(sf::RenderWindow &) const;
-    void drawPlayer(sf::RenderWindow &) const;
+    void drawMovingObject(sf::RenderWindow &) const;
     void drawStaticObjects(sf::RenderWindow &) const;
 }
 

@@ -17,16 +17,16 @@ void Coin::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {
-
+void Coin::handleCollision(StupidEnemy &gameObject, const sf::Vector2f & keyPressed) {
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
 void Coin::handleCollision(RandEnemy &gameObject, const sf::Vector2f & keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) {
-
+void Coin::handleCollision(SmartEnemy &gameObject, const sf::Vector2f & keyPressed) {
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
 void Coin::handleCollision(Coin &gameObject, const sf::Vector2f &) {

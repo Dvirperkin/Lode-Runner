@@ -63,8 +63,8 @@ void MovingObject::handleCollision(SmartEnemy &gameObject, const sf::Vector2f &)
 }
 //=============================================================================
 void MovingObject::handleCollision(Coin &gameObject, const sf::Vector2f & keyPressed) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 
     if(keyPressed == UP){
         setLastPosition();
@@ -94,10 +94,10 @@ void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPre
     }
 
     //In case of fall on pole, move the player on the pole.
-    if(gameObject.getGlobalBounds().contains({getGlobalBounds().left + getGlobalBounds().width - 10, getGlobalBounds().top + getGlobalBounds().height})
+    if(gameObject.getGlobalBounds().contains({getGlobalBounds().left + getGlobalBounds().width, getGlobalBounds().top + getGlobalBounds().height})
             && !getOnPole()){
 
-        setPosition(gameObject.getPosition());
+        setPosition({getPosition().x, gameObject.getPosition().y});
         setOnPole(true);
     }
 }

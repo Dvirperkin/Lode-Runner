@@ -1,9 +1,7 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player() {
-
-}
+Player::Player() {}
 //=============================================================================
 Player::Player(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
  : MovingObject(location , texture, stageSize) , m_lives(LIVE), m_score(0), m_level(START_LEVEL)
@@ -15,27 +13,22 @@ sf::Vector2f Player::move(const float &timeElapsed)
     if(getInTheAir())
         return STAND;
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
         changePosition(timeElapsed, LEFT, REFLECTION_LEFT);
         return LEFT;
     }
 
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
         changePosition(timeElapsed, RIGHT, REFLECTION_RIGHT);
         return RIGHT;
     }
 
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-    {
-
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
         changePosition(timeElapsed, UP, REFLECTION_UP);
         return UP;
     }
 
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
         changePosition(timeElapsed, DOWN, REFLECTION_DOWN);
         return DOWN;
     }
@@ -60,6 +53,11 @@ int Player::getScore() const{
 void Player::levelUP() {
     m_score += m_level * LEVEL_SCORE;
     m_level++;
+}
+//=============================================================================
+void Player::addScore(int score) {
+    if(score > 0)
+        m_score += score;
 }
 //=============================================================================
 void Player::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
@@ -94,29 +92,29 @@ void Player::handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) {
 }
 //=============================================================================
 void Player::handleCollision(Coin &gameObject, const sf::Vector2f & keyPressed) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 
     m_score += m_level * COIN_SCORE;
 }
 //=============================================================================
 void Player::handleCollision(LiveGift &gameObject, const sf::Vector2f &) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 }
 //=============================================================================
 void Player::handleCollision(ScoreGift &gameObject, const sf::Vector2f &) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 }
 //=============================================================================
 void Player::handleCollision(TimeGift &, const sf::Vector2f &) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 }
 //=============================================================================
 void Player::handleCollision(EnemyGift &, const sf::Vector2f &) {
-    setInTheAir(false);
     setOnLadder(false);
+    setOnPole(false);
 }
 //=============================================================================

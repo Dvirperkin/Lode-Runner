@@ -25,6 +25,7 @@ public:
     int getScore() const;
 
     void levelUP();
+    void addScore(int);
     void gravity(const float &);
 
     using MovingObject::handleCollision;

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Gift.h"
+#include "StageDetails.h"
 
 class TimeGift : public Gift{
 public:
-    TimeGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    TimeGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, StageDetails &);
 
     virtual void activate() override;
 
@@ -26,4 +27,5 @@ public:
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) override;
 
 private:
+    StageDetails * m_stageDetails;
 };

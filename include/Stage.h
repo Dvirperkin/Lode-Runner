@@ -25,6 +25,7 @@ public:
     virtual enum ScreenType_t display(sf::RenderWindow &) override;
     virtual void draw(sf::RenderWindow &) override;
     virtual void Music() override;
+    void addEnemy();
 
 private:
     StageDetails m_stageDetails;
@@ -40,11 +41,10 @@ private:
     bool m_firstRun;
 
     void initializingStage();
-    void createEnemy(const int, const int, const sf::Vector2i &);
-    void createGift(const int, const int, const sf::Vector2i &);
-    void gravity(MovingObject &, const sf::Vector2f &, const float &);
-    bool handleCollision(MovingObject &, const sf::Vector2f &);
-    void drawEnemies(sf::RenderWindow &) const;
-    void drawPlayer(sf::RenderWindow &) const;
+    void createEnemy(const int, const int);
+    void createGift(const int, const int);
+    void gravity(MovingObject &, const sf::Vector2f &, const float &, const sf::RenderWindow &);
+    bool handleCollision(MovingObject &, const sf::Vector2f &, const sf::RenderWindow &);
+    void drawMovingObject(sf::RenderWindow &) const;
     void drawStaticObjects(sf::RenderWindow &) const;
 };

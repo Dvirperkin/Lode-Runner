@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Macros.h"
 
 class StageDetails {
 public:
@@ -9,9 +10,10 @@ public:
     void setTimer(const int);
     void incCoin();
     void decCoin();
+    void addTime();
 
 private:
     int m_stageNumber;
-    sf::Clock m_timer;
+    int m_countDown;
     int m_coin;
 };

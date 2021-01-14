@@ -28,5 +28,5 @@ public:
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) override;
 
 private:
-    Stage & m_stage;
+    Stage * m_stage;
 };

@@ -1,19 +1,24 @@
 #include "EnemyGift.h"
+#include "Stage.h"
+#include "Player.h"
 
-EnemyGift::EnemyGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
- : Gift(location, texture, stageSize)
-{}
+EnemyGift::EnemyGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize , Stage & stage)
+ : Gift(location, texture, stageSize){
+
+    m_stage = &stage;
+}
 //=============================================================================
 void EnemyGift::activate() {
-
+    m_stage->addEnemy();
 }
 //=============================================================================
 void EnemyGift::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
-
 }
 //=============================================================================
 void EnemyGift::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
-
+    activate();
+    isDisposed();
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
 void EnemyGift::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {

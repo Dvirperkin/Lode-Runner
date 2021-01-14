@@ -1,8 +1,7 @@
 #include "Stage.h"
 
 //=======================---Constructor Section---============================
-Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true)
-{
+Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true){
     srand(time(NULL));
     initializingStage();
 }
@@ -20,9 +19,11 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
         m_firstRun = false;
     }
 
-    auto elapsed = m_clock.restart().asSeconds();
+    auto timeElapsed = m_clock.restart().asSeconds();
 
-    //elapsed = 0.02;
+
+    if(timeElapsed > TIME_ELAPSED_LIMIT)
+        timeElapsed = TIME_ELAPSED_LIMIT;
 
     for (auto event = sf::Event{}; window.pollEvent(event);) {
 
@@ -35,25 +36,23 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
     }
 
         //Player move.
-        auto keyPressed = m_player.move(elapsed);
+        auto keyPressed = m_player.move(timeElapsed);
 
-        gravity(m_player, keyPressed, elapsed);
+        gravity(m_player, keyPressed, timeElapsed, window);
 
         //Enemies moves.
         for(auto & enemy : m_enemies){
-          keyPressed = enemy->move(elapsed);
+          keyPressed = enemy->move(timeElapsed);
 
-          gravity(*enemy, keyPressed, elapsed);
+          gravity(*enemy, keyPressed, timeElapsed, window);
         }
 
         return STAGE;
 }
 //=============================================================================
-void Stage::draw(sf::RenderWindow &window)
-{
+void Stage::draw(sf::RenderWindow &window){
     drawStaticObjects(window);
-    drawEnemies(window);
-    drawPlayer(window);
+    drawMovingObject(window);
 }
 //=============================================================================
 void Stage::Music() {
@@ -66,8 +65,7 @@ void Stage::Music() {
     }
 }
 //=======================---Private Function Section---========================
-void Stage::initializingStage()
-{
+void Stage::initializingStage(){
     int timer;
     std::string line;
 
@@ -83,7 +81,7 @@ void Stage::initializingStage()
         getline(m_levelFile,line);
         m_map.push_back(line);
 
-        m_staticObjects.resize(m_stageSize.y);
+        m_staticObjects.push_back({});
 
         for(int col = 0; col < m_stageSize.x; col++)
         {
@@ -97,8 +95,7 @@ void Stage::initializingStage()
                     break;
 
                 case ENEMY_SYMBOL:
-                    createEnemy(row, col, m_stageSize);
-                    m_enemies[m_enemies.size() - 1]->changeSize();
+                    createEnemy(row, col);
                     m_staticObjects[row].push_back(nullptr);
                     break;
 
@@ -120,7 +117,7 @@ void Stage::initializingStage()
                     break;
 
                 case GIFT_SYMBOL:
-                    createGift(row, col, m_stageSize);
+                    createGift(row, col);
                     break;
 
                 case EMPTY:
@@ -131,61 +128,77 @@ void Stage::initializingStage()
     }
 }
 //=============================================================================
-void Stage::createEnemy(const int row, const int col, const sf::Vector2i & stageSize){
+void Stage::createEnemy(const int row, const int col){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
+
+    enemy = STUPID_ENEMY;
 
     switch(enemy)
     {
         case STUPID_ENEMY:
-            m_enemies.push_back(std::make_unique<StupidEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), stageSize));
+            m_enemies.push_back(std::make_unique<StupidEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
             break;
 
         case RAND_ENEMY:
-            m_enemies.push_back(std::make_unique<RandEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), stageSize));
+            m_enemies.push_back(std::make_unique<RandEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
             break;
 
         case SMART_ENEMY:
-            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), stageSize));
+            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
             break;
+    }
+
+    m_enemies[m_enemies.size() - 1]->changeSize();
+}
+//=============================================================================
+void Stage::addEnemy() {
+
+    for(auto rowStaticObject = rand() % m_staticObjects.size(); rowStaticObject < m_staticObjects.size(); rowStaticObject++){
+        for(auto colStaticObject = 0; colStaticObject <= m_staticObjects[rowStaticObject].size(); colStaticObject++){
+            if(!m_staticObjects[rowStaticObject][colStaticObject])
+            {
+                createEnemy(rowStaticObject, colStaticObject);
+                return;
+            }
+        }
     }
 }
 //=============================================================================
-void Stage::createGift(const int row, const int col, const sf::Vector2i & stageSize){
+void Stage::createGift(const int row, const int col){
 
     auto gift = (enum GiftType_t) (rand() % MOD4);
 
     switch(gift)
     {
         case LIVE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize));
+            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_player));
             break;
 
         case SCORE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize));
+            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_player));
             break;
 
         case TIME_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize));
+            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_stageDetails));
             break;
 
         case ENEMY_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), stageSize, *this));
+            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, *this));
             break;
     }
 }
 //=============================================================================
-void Stage::gravity(MovingObject & movingObject ,const sf::Vector2f & keyPressed, const float & timeElapsed) {
+void Stage::gravity(MovingObject & movingObject ,const sf::Vector2f & keyPressed, const float & timeElapsed , const sf::RenderWindow & window) {
 
-    if(!handleCollision(movingObject, keyPressed))
-    {
+    if(!handleCollision(movingObject, keyPressed, window)){
         movingObject.gravity(timeElapsed);
     }
 
-    handleCollision(movingObject, keyPressed);
+    handleCollision(movingObject, keyPressed, window);
 }
 //=============================================================================
-bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & keyPressed) {
+bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & keyPressed, const sf::RenderWindow & window) {
 
     bool collide = false;
 
@@ -193,17 +206,17 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
                                     (movingObject.getPosition().y / WINDOW_HEIGHT) * m_stageSize.y);
 
     //Checks for collision with nearby static object.
-    for(int rowStaticObject = arrPosition.y - 1; rowStaticObject <= arrPosition.y + 1; rowStaticObject++){
-        for(int colStaticObject = arrPosition.x - 1; colStaticObject <= arrPosition.x + 1; colStaticObject++){
+    for(auto rowStaticObject = arrPosition.y - 1; rowStaticObject <= arrPosition.y + 1; rowStaticObject++){
+        for(auto colStaticObject = arrPosition.x - 1; colStaticObject <= arrPosition.x + 1; colStaticObject++){
             if(!m_staticObjects[rowStaticObject][colStaticObject])
                 continue;
 
             if(movingObject.checkCollision(m_staticObjects[rowStaticObject][colStaticObject]->getGlobalBounds())){
                 collide = true;
+
                 movingObject.handleCollision(*m_staticObjects[rowStaticObject][colStaticObject], keyPressed);
 
-                if(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())
-                {
+                if(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed()){
                     m_staticObjects[rowStaticObject][colStaticObject].release();
                 }
             }
@@ -225,25 +238,20 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
     return collide;
 }
 //=============================================================================
-void Stage::drawEnemies(sf::RenderWindow &window) const
-{
+
+
+void Stage::drawMovingObject(sf::RenderWindow & window) const{
+
+    m_player.draw(window);
+
     for(int index = 0; index < m_enemies.size(); index++)
         m_enemies[index]->draw(window);
 }
 //=============================================================================
-void Stage::drawPlayer(sf::RenderWindow &window) const
-{
-    m_player.draw(window);
-}
-//=============================================================================
-void Stage::drawStaticObjects(sf::RenderWindow &window) const
-{
-    for(int rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++)
-    {
-        for(int colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++)
-        {
-            if(m_staticObjects[rowStaticObject][colStaticObject])
-            {
+void Stage::drawStaticObjects(sf::RenderWindow &window) const{
+    for(int rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++){
+        for(int colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
+            if(m_staticObjects[rowStaticObject][colStaticObject]){
                m_staticObjects[rowStaticObject][colStaticObject]->draw(window);
             }
         }

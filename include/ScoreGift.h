@@ -4,7 +4,7 @@
 
 class ScoreGift : public Gift {
 public:
-    ScoreGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    ScoreGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, Player &);
 
     virtual void activate() override;
 
@@ -26,4 +26,5 @@ public:
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) override;
 
 private:
+    Player * m_player;
 };

@@ -14,11 +14,18 @@ const int MENU_BUTTON_WIDTH = WINDOW_WIDTH / 3;
 const int NUM_OF_TEXTURES = 7;
 const int NUM_OF_SOUNDS = 5;
 const int THICKNESS = 7;
+const int START_LEVEL = 1;
 const int MOD3 = 3;
 const int MOD4 = 4;
 const int LIVE = 3;
 const int COIN_SCORE = 2;
 const int LEVEL_SCORE = 50;
+const int GIFT_SCORE = 100;
+const int ADD_TIME = 10;
+const int FIRST_ENEMY = 1;
+
+const float TIME_ELAPSED_LIMIT = 0.05;
+
 const char EMPTY = ' ';
 const char PLAYER_SYMBOL = '@';
 const char ENEMY_SYMBOL = '%';
@@ -27,6 +34,7 @@ const char WALL_SYMBOL = '#';
 const char LADDER_SYMBOL = 'H';
 const char POLE_SYMBOL = '-';
 const char GIFT_SYMBOL = '+';
+
 
 const int ENEMY_UP = 0;
 const int ENEMY_DOWN = 1;

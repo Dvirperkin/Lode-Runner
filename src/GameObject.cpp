@@ -104,15 +104,6 @@ bool GameObject::checkCollision(const sf::FloatRect & otherGlobalBound) {
 
     auto offsetGlobalBound = otherGlobalBound;
 
-    //offsetGlobalBound.width -= offsetGlobalBound.width * 0.1;
-    //offsetGlobalBound.top += offsetGlobalBound.height * 0.3;
-    //offsetGlobalBound.left += offsetGlobalBound.width * 0.1;
-
-    //offsetGlobalBound.height -=  10;
-    //offsetGlobalBound.width -= 10;
-    //offsetGlobalBound.top += 1;
-    //offsetGlobalBound.left += 10;
-
     return m_sprite.getGlobalBounds().intersects(offsetGlobalBound);
 }
 //=============================================================================
