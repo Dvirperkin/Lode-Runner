@@ -132,8 +132,6 @@ void Stage::createEnemy(const int row, const int col){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
 
-    enemy = STUPID_ENEMY;
-
     switch(enemy)
     {
         case STUPID_ENEMY:
@@ -191,7 +189,7 @@ void Stage::createGift(const int row, const int col){
 //=============================================================================
 void Stage::gravity(MovingObject & movingObject ,const sf::Vector2f & keyPressed, const float & timeElapsed , const sf::RenderWindow & window) {
 
-    if(!handleCollision(movingObject, keyPressed, window)){
+    if(!handleCollision(movingObject, keyPressed, window) || movingObject.getInTheAir()){
         movingObject.gravity(timeElapsed);
     }
 
@@ -223,23 +221,24 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
         }
     }
 
-    //Checks for collision with enemy.
-    for(auto & enemy : m_enemies){
-        if(movingObject.checkCollision(enemy->getGlobalBounds())){
-            movingObject.handleCollision(*enemy, keyPressed);
+    //Checks for collision between player to enemy.
+    if(typeid(movingObject) == typeid(Player)){
+        for(auto & enemy : m_enemies){
+            if(movingObject.checkCollision(enemy->getGlobalBounds())){
+                movingObject.handleCollision(*enemy, keyPressed);
 
-            /*if(m_player.checkDisposed())
-            {
-                std::cout << "Fail" << std::endl;
-            }*/
+                /*if(m_player.checkDisposed())
+                {
+                    std::cout << "Fail" << std::endl;
+                }*/
+            }
         }
     }
+
 
     return collide;
 }
 //=============================================================================
-
-
 void Stage::drawMovingObject(sf::RenderWindow & window) const{
 
     m_player.draw(window);

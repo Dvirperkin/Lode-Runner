@@ -9,54 +9,20 @@ void Coin::activate() {
     isDisposed();
 }
 //=============================================================================
-void Coin::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
-}
-//=============================================================================
-void Coin::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
+void Coin::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
     activate();
-    gameObject.handleCollision(*this, keyPressed);
+    player.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(StupidEnemy &gameObject, const sf::Vector2f & keyPressed) {
-    gameObject.handleCollision(*this, keyPressed);
+void Coin::handleCollision(StupidEnemy & stupidEnemy, const sf::Vector2f & keyPressed) {
+    stupidEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(RandEnemy &gameObject, const sf::Vector2f & keyPressed) {
-    gameObject.handleCollision(*this, keyPressed);
+void Coin::handleCollision(RandEnemy & randEnemy, const sf::Vector2f & keyPressed) {
+    randEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(SmartEnemy &gameObject, const sf::Vector2f & keyPressed) {
-    gameObject.handleCollision(*this, keyPressed);
-}
-//=============================================================================
-void Coin::handleCollision(Coin &gameObject, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(Wall &gameObject, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(Pole &gameObject, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(Ladder &gameObject, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(LiveGift &gameObject, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(ScoreGift &gameObject, const sf::Vector2f &) {
-}
-//=============================================================================
-void Coin::handleCollision(TimeGift &, const sf::Vector2f &) {
-
-}
-//=============================================================================
-void Coin::handleCollision(EnemyGift &, const sf::Vector2f &) {
-
+void Coin::handleCollision(SmartEnemy & smartEnemy, const sf::Vector2f & keyPressed) {
+    smartEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================

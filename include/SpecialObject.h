@@ -8,5 +8,4 @@ public:
     virtual void activate() = 0;
 
 private:
-
 };

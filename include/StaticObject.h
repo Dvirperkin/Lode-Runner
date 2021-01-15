@@ -7,6 +7,7 @@ public:
     StaticObject(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
 
     //---Collision Function Section---
+    virtual void handleCollision(GameObject &, const sf::Vector2f &) override;
     virtual void handleCollision(Player &, const sf::Vector2f &) override;
     virtual void handleCollision(StupidEnemy &, const sf::Vector2f &) override;
     virtual void handleCollision(RandEnemy &, const sf::Vector2f &) override;

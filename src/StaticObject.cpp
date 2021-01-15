@@ -3,53 +3,57 @@
 StaticObject::StaticObject(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
     : GameObject(location , texture, stageSize)
 {
-
 }
-
-void StaticObject::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
-
+//=============================================================================
+void StaticObject::handleCollision(GameObject & gameObject, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(Player & player, const sf::Vector2f &keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(RandEnemy &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(StupidEnemy & stupidEnemy, const sf::Vector2f &keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(RandEnemy & randEnemy, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(Coin &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(SmartEnemy & smartEnemy, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(Wall &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(Coin & coin, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(Pole &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(Ladder &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(Pole & pole, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(LiveGift &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(Ladder & ladder, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(ScoreGift &gameObject, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(LiveGift & liveGift, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(TimeGift &, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(ScoreGift & scoreGift, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
-
-void StaticObject::handleCollision(EnemyGift &, const sf::Vector2f &) {
-
+//=============================================================================
+void StaticObject::handleCollision(TimeGift & timeGift, const sf::Vector2f & keyPressed) {
+    /*ignore*/
 }
+//=============================================================================
+void StaticObject::handleCollision(EnemyGift & enemyGift, const sf::Vector2f & keyPressed) {
+    /*ignore*/
+}
+//=============================================================================
