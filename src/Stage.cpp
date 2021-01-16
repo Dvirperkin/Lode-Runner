@@ -9,6 +9,7 @@ Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true){
 enum ScreenType_t Stage::display(sf::RenderWindow & window) {
 
     window.clear();
+    m_stageDetails.draw(window);
     draw(window);
     window.display();
 
@@ -20,7 +21,6 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
     }
 
     auto timeElapsed = m_clock.restart().asSeconds();
-
 
     if(timeElapsed > TIME_ELAPSED_LIMIT)
         timeElapsed = TIME_ELAPSED_LIMIT;
@@ -35,10 +35,17 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
         }
     }
 
-        //Player move.
+        //Player moves.
         auto keyPressed = m_player.move(timeElapsed);
 
         gravity(m_player, keyPressed, timeElapsed, window);
+
+
+        //Check current situation in the game.
+        auto situation = gameSituation();
+
+        if(situation != DO_NOTHING)
+            return (enum ScreenType_t) situation;
 
         //Enemies moves.
         for(auto & enemy : m_enemies){
@@ -65,9 +72,59 @@ void Stage::Music() {
     }
 }
 //=======================---Private Function Section---========================
+int Stage::gameSituation() {
+
+    //The stage is complete.
+    if(m_stageDetails.getCoin() == 0) {
+        //Load next stage.
+        if(!m_levelFile.eof()) {
+            m_player.levelUP();
+            auto PlayerLives = m_player.getLive();
+            auto PlayerScore = m_player.getScore();
+            auto PlayerLevel = m_player.getLevel();
+            initializingStage();
+            m_player.setLives(PlayerLives);
+            m_player.addScore(PlayerScore);
+            m_player.setLevel(PlayerLevel);
+            return STAGE;
+        }
+
+        //The player wins, and returns to the main menu.
+        else {
+            m_levelFile.seekg(0, std::ios::beg);
+            initializingStage();
+            reloadStage();
+            return MAIN_MENU;
+        }
+    }
+
+    if(m_player.checkDisposed()) {
+        //If the player disqualified return to the main menu
+        //and reloads the first level to start a new game.
+        if(m_player.getLive() == 0) {
+            m_levelFile.seekg(0, std::ios::beg);
+            initializingStage();
+            reloadStage();
+            return MAIN_MENU;
+        }
+
+        //If the player dead but not disqualified reload the current stage.
+        reloadStage();
+        return STAGE;
+    }
+
+    return -1;
+}
+//=============================================================================
 void Stage::initializingStage(){
     int timer;
     std::string line;
+
+    //Initialize vectors and coins.
+    m_map.clear();
+    m_enemies.clear();
+    m_staticObjects.clear();
+    m_stageDetails.resetMaxCoin();
 
     m_levelFile >> m_stageSize.x >> m_stageSize.y >> timer;
 
@@ -100,7 +157,7 @@ void Stage::initializingStage(){
                     break;
 
                 case COIN_SYMBOL:
-                    m_staticObjects[row].push_back(std::make_unique<Coin>(sf::Vector2f(col, row) , m_Textures.getCoinTexture(), m_stageSize));
+                    m_staticObjects[row].push_back(std::make_unique<Coin>(sf::Vector2f(col, row) , m_Textures.getCoinTexture(), m_stageSize, m_stageDetails));
                     m_stageDetails.incCoin();
                     break;
 
@@ -128,6 +185,38 @@ void Stage::initializingStage(){
     }
 }
 //=============================================================================
+void Stage::reloadStage() {
+
+    m_player.setFirstPosition();
+    m_player.isDisposed();
+
+    for(auto rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++){
+        for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
+            if(m_staticObjects[rowStaticObject][colStaticObject])
+            {
+                m_staticObjects[rowStaticObject][colStaticObject]->setFirstPosition();
+
+                //If the current static object was taken return it.
+                if(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())
+                    m_staticObjects[rowStaticObject][colStaticObject]->isDisposed();
+            }
+        }
+    }
+
+    for(auto currentEnemy = 0; currentEnemy < m_enemies.size(); currentEnemy++) {
+
+        //Checks if the current enemy was added from a gift and if so erase him.
+        if(m_enemies[currentEnemy]->getAddedFromGift()) {
+            m_enemies.erase(m_enemies.begin() + currentEnemy);
+            currentEnemy--;
+        }
+
+        m_enemies[currentEnemy]->setFirstPosition();
+    }
+
+    m_stageDetails.reloadStageDetails();
+}
+//=============================================================================
 void Stage::createEnemy(const int row, const int col){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
@@ -153,10 +242,11 @@ void Stage::createEnemy(const int row, const int col){
 void Stage::addEnemy() {
 
     for(auto rowStaticObject = rand() % m_staticObjects.size(); rowStaticObject < m_staticObjects.size(); rowStaticObject++){
-        for(auto colStaticObject = 0; colStaticObject <= m_staticObjects[rowStaticObject].size(); colStaticObject++){
+        for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
             if(!m_staticObjects[rowStaticObject][colStaticObject])
             {
                 createEnemy(rowStaticObject, colStaticObject);
+                m_enemies[m_enemies.size() - 1]->setAddedFromGift();
                 return;
             }
         }
@@ -166,6 +256,8 @@ void Stage::addEnemy() {
 void Stage::createGift(const int row, const int col){
 
     auto gift = (enum GiftType_t) (rand() % MOD4);
+
+    gift = LIVE_GIFT;
 
     switch(gift)
     {
@@ -193,6 +285,9 @@ void Stage::gravity(MovingObject & movingObject ,const sf::Vector2f & keyPressed
         movingObject.gravity(timeElapsed);
     }
 
+    if(m_player.checkDisposed())
+        return;
+
     handleCollision(movingObject, keyPressed, window);
 }
 //=============================================================================
@@ -204,18 +299,19 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
                                     (movingObject.getPosition().y / WINDOW_HEIGHT) * m_stageSize.y);
 
     //Checks for collision with nearby static object.
-    for(auto rowStaticObject = arrPosition.y - 1; rowStaticObject <= arrPosition.y + 1; rowStaticObject++){
-        for(auto colStaticObject = arrPosition.x - 1; colStaticObject <= arrPosition.x + 1; colStaticObject++){
-            if(!m_staticObjects[rowStaticObject][colStaticObject])
-                continue;
+    for(auto rowStaticObject = arrPosition.y - 1; rowStaticObject <= arrPosition.y + 1; rowStaticObject++) {
+        for (auto colStaticObject = arrPosition.x - 1; colStaticObject <= arrPosition.x + 1; colStaticObject++) {
 
-            if(movingObject.checkCollision(m_staticObjects[rowStaticObject][colStaticObject]->getGlobalBounds())){
-                collide = true;
+            if (rowStaticObject >= 0 && rowStaticObject < m_staticObjects.size() && colStaticObject >= 0 &&
+                colStaticObject < m_staticObjects[rowStaticObject].size()) {
 
-                movingObject.handleCollision(*m_staticObjects[rowStaticObject][colStaticObject], keyPressed);
+                if (!m_staticObjects[rowStaticObject][colStaticObject] || m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())
+                    continue;
 
-                if(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed()){
-                    m_staticObjects[rowStaticObject][colStaticObject].release();
+                if (movingObject.checkCollision(m_staticObjects[rowStaticObject][colStaticObject]->getGlobalBounds())) {
+                    collide = true;
+
+                    movingObject.handleCollision(*m_staticObjects[rowStaticObject][colStaticObject], keyPressed);
                 }
             }
         }
@@ -227,14 +323,11 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
             if(movingObject.checkCollision(enemy->getGlobalBounds())){
                 movingObject.handleCollision(*enemy, keyPressed);
 
-                /*if(m_player.checkDisposed())
-                {
-                    std::cout << "Fail" << std::endl;
-                }*/
+                if(m_player.checkDisposed())
+                    return true;
             }
         }
     }
-
 
     return collide;
 }
@@ -250,7 +343,7 @@ void Stage::drawMovingObject(sf::RenderWindow & window) const{
 void Stage::drawStaticObjects(sf::RenderWindow &window) const{
     for(int rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++){
         for(int colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
-            if(m_staticObjects[rowStaticObject][colStaticObject]){
+            if(m_staticObjects[rowStaticObject][colStaticObject] && !(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())){
                m_staticObjects[rowStaticObject][colStaticObject]->draw(window);
             }
         }

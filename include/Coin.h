@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StageDetails.h"
 #include "SpecialObject.h"
 #include "Player.h"
 #include "StupidEnemy.h"
@@ -16,7 +17,7 @@
 class Coin : public SpecialObject {
 
 public:
-    Coin(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    Coin(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, StageDetails &);
     virtual void activate() override;
 
     using SpecialObject::handleCollision;
@@ -27,5 +28,5 @@ public:
     virtual void handleCollision(RandEnemy &, const sf::Vector2f &) override;
     virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) override;
 private:
-
+    StageDetails * m_stageDetails;
 };

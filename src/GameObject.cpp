@@ -20,10 +20,6 @@ GameObject::GameObject(const sf::Vector2f & position, const sf::Texture & textur
     initPosition(position, stageSize);
 }
 //=============================================================================
-sf::Vector2f GameObject::getCenter() const {
-    return sf::Vector2f({m_position.x + (m_objectSize.x / 2), m_position.y + (m_objectSize.y / 2)});
-}
-//=============================================================================
 const sf::Vector2f &GameObject::getPosition() const
 {
     return m_position;
@@ -37,19 +33,16 @@ const sf::Vector2f & GameObject::getLastReflection() const {
     return m_lastReflection;
 }
 //=============================================================================
-sf::Vector2f GameObject::getOrigin() const {
-    return m_sprite.getOrigin();
-}
-//=============================================================================
 void GameObject::draw(sf::RenderWindow &window) const
 {
     window.draw(m_sprite);
 }
 //=============================================================================
 void GameObject::initPosition(const sf::Vector2f & position, const sf::Vector2i & stageSize) {
-    m_position.x = (position.x * WINDOW_WIDTH / stageSize.x) + WINDOW_WIDTH / (stageSize.x * 2);
-    m_position.y = (position.y * WINDOW_HEIGHT / stageSize.y) + WINDOW_HEIGHT / (stageSize.y * 2);
-    m_sprite.setPosition(m_position);
+    m_firstPosition.x = (position.x * WINDOW_WIDTH / stageSize.x) + WINDOW_WIDTH / (stageSize.x * 2);
+    m_firstPosition.y = (position.y * (WINDOW_HEIGHT - STAGE_DETAILS_SIZE) / stageSize.y) + STAGE_DETAILS_SIZE + WINDOW_HEIGHT / (stageSize.y * 2);
+    m_sprite.setPosition(m_firstPosition);
+    m_position = m_firstPosition;
     m_lastPosition = m_sprite.getPosition();
 }
 //=============================================================================
@@ -60,18 +53,26 @@ void GameObject::changeSize(){
     m_objectSize.y = m_sprite.getScale().y *  m_sprite.getTexture()->getSize().y;
 }
 //=============================================================================
+void GameObject::setFirstPosition() {
+    m_sprite.setPosition(m_firstPosition);
+}
+//=============================================================================
 void GameObject::setPosition(const sf::Vector2f & position) {
     m_sprite.setPosition(position);
 }
 //=============================================================================
 void GameObject::changePosition(const float & timeElapsed, const sf::Vector2f & direction, const sf::Vector2f & reflection){
+
+    auto checkMove = m_lastReflection + (direction * SPEED_PER_SECOND * timeElapsed);
+
     m_lastPosition = m_sprite.getPosition();
     m_sprite.move(direction * SPEED_PER_SECOND * timeElapsed);
     m_position = m_sprite.getPosition();
 
+    if(m_position.x < 0 || m_position.x > WINDOW_WIDTH || m_position.y < 0 || m_position.y > WINDOW_HEIGHT)
+        setLastPosition();
 
-    if(reflection == REFLECTION_RIGHT && m_lastReflection == REFLECTION_LEFT)
-    {
+    if(reflection == REFLECTION_RIGHT && m_lastReflection == REFLECTION_LEFT){
         m_sprite.scale(REFLECTION_LEFT);
 
         m_lastReflection = reflection;
@@ -89,7 +90,12 @@ void GameObject::setLastPosition() {
 }
 //=============================================================================
 void GameObject::isDisposed() {
-    m_isDisposed = true;
+
+    if(m_isDisposed)
+        m_isDisposed = false;
+
+    else
+        m_isDisposed = true;
 }
 //=============================================================================
 bool GameObject::checkDisposed() const{
@@ -101,10 +107,7 @@ sf::FloatRect GameObject::getGlobalBounds() const {
 }
 //=============================================================================
 bool GameObject::checkCollision(const sf::FloatRect & otherGlobalBound) {
-
-    auto offsetGlobalBound = otherGlobalBound;
-
-    return m_sprite.getGlobalBounds().intersects(offsetGlobalBound);
+    return m_sprite.getGlobalBounds().intersects(otherGlobalBound);
 }
 //=============================================================================
 

@@ -40,7 +40,9 @@ private:
     Textures m_Textures;
     bool m_firstRun;
 
+    int gameSituation();
     void initializingStage();
+    void reloadStage();
     void createEnemy(const int, const int);
     void createGift(const int, const int);
     void gravity(MovingObject &, const sf::Vector2f &, const float &, const sf::RenderWindow &);

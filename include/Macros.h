@@ -7,10 +7,11 @@ enum EnemyType_t {STUPID_ENEMY, RAND_ENEMY, SMART_ENEMY};
 enum GiftType_t {LIVE_GIFT, SCORE_GIFT, TIME_GIFT, ENEMY_GIFT};
 
 const int WINDOW_HEIGHT = 1000;
-const int WINDOW_WIDTH = 1850;
+const int WINDOW_WIDTH = 1750;
 const int MENU_BUTTON_HEIGHT = 100;
 const int GRAY = 100;
 const int MENU_BUTTON_WIDTH = WINDOW_WIDTH / 3;
+const int STAGE_DETAILS_SIZE = 50;
 const int NUM_OF_TEXTURES = 7;
 const int NUM_OF_SOUNDS = 5;
 const int THICKNESS = 7;
@@ -23,7 +24,7 @@ const int LEVEL_SCORE = 50;
 const int GIFT_SCORE = 100;
 const int ADD_TIME = 10;
 const int FIRST_ENEMY = 1;
-
+const int DO_NOTHING = -1;
 const float TIME_ELAPSED_LIMIT = 0.05;
 
 const char EMPTY = ' ';

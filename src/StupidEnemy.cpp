@@ -39,14 +39,14 @@ void StupidEnemy::handleCollision(Player &gameObject, const sf::Vector2f &keyPre
 void StupidEnemy::handleCollision(Wall &gameObject, const sf::Vector2f &keyPressed) {
     setInTheAir(false);
 
-    if(getGlobalBounds().contains(gameObject.getGlobalBounds().left, gameObject.getGlobalBounds().top + gameObject.getGlobalBounds().height))
+    if(getGlobalBounds().contains(gameObject.getGlobalBounds().left, gameObject.getGlobalBounds().top + getGlobalBounds().height))
     {
         setLastPosition();
         m_direction = true;
         return;
     }
 
-    else if(getGlobalBounds().contains(gameObject.getGlobalBounds().left + gameObject.getGlobalBounds().width, gameObject.getGlobalBounds().top + gameObject.getGlobalBounds().height))
+    else if(getGlobalBounds().contains(gameObject.getGlobalBounds().left + gameObject.getGlobalBounds().width, gameObject.getGlobalBounds().top + getGlobalBounds().height))
     {
         setLastPosition();
         m_direction = false;

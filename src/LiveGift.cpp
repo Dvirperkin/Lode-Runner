@@ -6,10 +6,10 @@ LiveGift::LiveGift(const sf::Vector2f & location, const sf::Texture & texture, c
  {
     m_player = &player;
  }
-
+//=============================================================================
 void LiveGift::activate() {
     isDisposed();
-    m_player->levelUP();
+    m_player->addLive();
 }
 //=============================================================================
 void LiveGift::handleCollision(Player & player, const sf::Vector2f & keyPressed) {

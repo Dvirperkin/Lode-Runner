@@ -13,9 +13,9 @@
 
 
 MovingObject::MovingObject(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
- : GameObject(location , texture, stageSize), m_inTheAir(false), m_onLadder(false), m_onPole(false)
-{
-}
+ : GameObject(location , texture, stageSize), m_inTheAir(false), m_onLadder(false), m_onPole(false){
+
+ }
 //=============================================================================
 bool MovingObject::getOnPole() const {
     return m_onPole;
@@ -46,7 +46,7 @@ void MovingObject::handleCollision(GameObject &gameObject, const sf::Vector2f &k
     /*ignore*/
 }
 //=============================================================================
-void MovingObject::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
+void MovingObject::handleCollision(Player & player, const sf::Vector2f &keyPressed) {
     /*ignore*/
 }
 //=============================================================================
@@ -105,17 +105,15 @@ void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPre
 void MovingObject::handleCollision(Ladder &gameObject, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
 
-    if(gameObject.getGlobalBounds().contains(getCenter())) {
+    if(gameObject.getGlobalBounds().contains(getPosition())) {
 
         if (!getOnLadder() && (keyPressed == UP || keyPressed == DOWN)) {
-            setPosition(gameObject.getPosition());
+            setPosition({gameObject.getPosition().x, getPosition().y});
 
             setOnPole(false);
             setOnLadder(true);
             return;
         }
-
-
 
         else if (getOnLadder() && (keyPressed == RIGHT || keyPressed == LEFT)) {
             setOnLadder(false);
@@ -125,23 +123,39 @@ void MovingObject::handleCollision(Ladder &gameObject, const sf::Vector2f & keyP
     //Change Sprite.
 }
 //=============================================================================
-void MovingObject::handleCollision(LiveGift &gameObject, const sf::Vector2f &) {
-    setInTheAir(false);
+void MovingObject::handleCollision(LiveGift &gameObject, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
+    setOnPole(false);
+
+    if(keyPressed == UP){
+        setLastPosition();
+    }
 }
 //=============================================================================
-void MovingObject::handleCollision(ScoreGift &gameObject, const sf::Vector2f &) {
-    setInTheAir(false);
+void MovingObject::handleCollision(ScoreGift &gameObject, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
+    setOnPole(false);
+
+    if(keyPressed == UP){
+        setLastPosition();
+    }
 }
 //=============================================================================
-void MovingObject::handleCollision(TimeGift &, const sf::Vector2f &) {
-    setInTheAir(false);
+void MovingObject::handleCollision(TimeGift &, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
+    setOnPole(false);
+
+    if(keyPressed == UP){
+        setLastPosition();
+    }
 }
 //=============================================================================
-void MovingObject::handleCollision(EnemyGift &, const sf::Vector2f &) {
-    setInTheAir(false);
+void MovingObject::handleCollision(EnemyGift &, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
+    setOnPole(false);
+
+    if(keyPressed == UP){
+        setLastPosition();
+    }
 }
 //=============================================================================

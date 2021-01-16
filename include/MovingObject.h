@@ -5,6 +5,7 @@
 class MovingObject : public GameObject {
 
 public:
+    MovingObject() = default;
     MovingObject(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
     virtual sf::Vector2f move(const float &) = 0;
     virtual void gravity(const float & ) = 0;

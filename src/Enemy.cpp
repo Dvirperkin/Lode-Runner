@@ -1,18 +1,16 @@
 #include "Enemy.h"
 
-int Enemy::m_numOfEnemies = 0;
-
 Enemy::Enemy(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
-    : MovingObject(location , texture, stageSize)
+    : MovingObject(location , texture, stageSize), m_addedFromGift(false)
 {
 }
 //=============================================================================
-void Enemy::addEnemy() {
-    m_numOfEnemies++;
+void Enemy::setAddedFromGift() {
+    m_addedFromGift = true;
 }
 //=============================================================================
-int Enemy::getNumOfEnemies() {
-    return m_numOfEnemies;
+bool Enemy::getAddedFromGift() const{
+    return m_addedFromGift;
 }
 //=============================================================================
 

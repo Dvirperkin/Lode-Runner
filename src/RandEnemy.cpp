@@ -4,7 +4,6 @@
 RandEnemy::RandEnemy(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
  : Enemy(location, texture, stageSize)
  {
-    addEnemy();
  }
 //=============================================================================
 sf::Vector2f RandEnemy::move(const float & timeElapsed) {
@@ -49,7 +48,6 @@ void RandEnemy::handleCollision(GameObject &gameObject, const sf::Vector2f &keyP
 }
 //=============================================================================
 void RandEnemy::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
-    setInTheAir(false);
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================

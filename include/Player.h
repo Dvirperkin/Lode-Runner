@@ -23,8 +23,13 @@ public:
 
     int getLive() const;
     int getScore() const;
+    int getLevel() const;
+
+    void setLives(int);
+    void setLevel(int);
 
     void levelUP();
+    void addLive();
     void addScore(int);
     void gravity(const float &);
 

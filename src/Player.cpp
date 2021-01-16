@@ -4,7 +4,7 @@
 Player::Player() {}
 //=============================================================================
 Player::Player(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
- : MovingObject(location , texture, stageSize) , m_lives(LIVE), m_score(0), m_level(START_LEVEL)
+ : MovingObject(location , texture, stageSize) , m_lives(LIVE), m_score(0), m_level(0)
 {
 }
 //===================================================================
@@ -45,14 +45,32 @@ void Player::gravity(const float &timeElapsed) {
 int Player::getLive() const {
     return m_lives;
 }
+
 //=============================================================================
 int Player::getScore() const{
     return m_score;
 }
 //=============================================================================
+int Player::getLevel() const {
+    return m_level;
+}
+//=============================================================================
+void Player::setLives(int lives) {
+    if(lives > m_lives)
+        m_lives = lives;
+}
+//=============================================================================
+void Player::setLevel(int level) {
+    m_level = level;
+}
+//=============================================================================
 void Player::levelUP() {
     m_score += m_level * LEVEL_SCORE;
     m_level++;
+}
+//=============================================================================
+void Player::addLive() {
+    m_lives++;
 }
 //=============================================================================
 void Player::addScore(int score) {

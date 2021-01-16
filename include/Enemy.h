@@ -6,10 +6,10 @@ class Enemy : public MovingObject {
 public:
     Enemy(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
 
-    void addEnemy();
-    int getNumOfEnemies();
+    void setAddedFromGift();
+    bool getAddedFromGift() const;
 
 private:
-    static int m_numOfEnemies;
+    bool m_addedFromGift;
 };
 

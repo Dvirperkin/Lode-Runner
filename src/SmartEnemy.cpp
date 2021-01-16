@@ -13,15 +13,17 @@ sf::Vector2f SmartEnemy::move(const float &) {
     return STAND;
 }
 //=============================================================================
-void SmartEnemy::gravity(const float &) {
+void SmartEnemy::gravity(const float & timeElapsed) {
+    setInTheAir(true);
 
+    changePosition(timeElapsed, DOWN, REFLECTION_RIGHT);
 }
 //=============================================================================
-void SmartEnemy::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
-
+void SmartEnemy::handleCollision(GameObject & gameObject, const sf::Vector2f & keyPressed) {
+    gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void SmartEnemy::handleCollision(Player &gameObject, const sf::Vector2f &) {
-
+void SmartEnemy::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
+    player.handleCollision(*this, keyPressed);
 }
 //=============================================================================

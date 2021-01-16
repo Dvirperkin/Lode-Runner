@@ -17,6 +17,7 @@ class EnemyGift;
 class GameObject {
 
 public:
+    GameObject() = default;
     GameObject(const sf::Vector2f &, const sf::Texture &, const sf::Vector2i &);
 
     void initPosition(const sf::Vector2f &, const sf::Vector2i &);
@@ -26,9 +27,8 @@ public:
     const sf::Vector2f & getLastPosition() const;
     const sf::Vector2f & getLastReflection() const;
     sf::FloatRect getGlobalBounds() const;
-    sf::Vector2f getOrigin() const;
-    sf::Vector2f getCenter() const;
 
+    void setFirstPosition();
     void setPosition(const sf::Vector2f &);
     void changePosition(const float &, const sf::Vector2f & , const sf::Vector2f &);
     void setLastPosition();
@@ -54,6 +54,7 @@ public:
     virtual void handleCollision(EnemyGift &, const sf::Vector2f &) = 0;
 
 private:
+    sf::Vector2f m_firstPosition;
     sf::Vector2f m_position;
     sf::Vector2f m_lastPosition;
     sf::Vector2f m_lastReflection;
