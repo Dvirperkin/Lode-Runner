@@ -23,6 +23,7 @@ bool Enemy::getLocked() const {
 }
 //=============================================================================
 void Enemy::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
+    setInTheAir(false);
 
     if(!wall.checkDisposed())
         setLastPosition();

@@ -25,6 +25,7 @@ public:
     virtual void handleCollision(RandEnemy &, const sf::Vector2f &) override;
     virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) override;
     virtual void handleCollision(Coin &, const sf::Vector2f &) override;
+    virtual void handleCollision(Wall &, const sf::Vector2f &) override;
     virtual void handleCollision(Pole &, const sf::Vector2f &) override;
     virtual void handleCollision(Ladder &, const sf::Vector2f &) override;
     virtual void handleCollision(LiveGift &, const sf::Vector2f &) override;

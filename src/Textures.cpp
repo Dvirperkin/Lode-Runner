@@ -15,6 +15,7 @@ Textures::Textures()
     m_textures[GIFT].loadFromFile("Gift.png");
     m_textures[STAGE_DETAILS].loadFromFile("StageDetails.jpg");
     m_textures[STAGE_BACKGROUND].loadFromFile("StageBackGround.png");
+    m_textures[MENU_BACKGROUND].loadFromFile("MenuBackGround.png");
 }
 //=======================================================================
 Textures & Textures::texturesObject(){

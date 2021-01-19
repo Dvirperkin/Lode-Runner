@@ -71,6 +71,13 @@ void MovingObject::handleCollision(Coin &gameObject, const sf::Vector2f & keyPre
     }
 }
 //=============================================================================
+void MovingObject::handleCollision(Wall & wall, const sf::Vector2f &) {
+    setInTheAir(false);
+
+    if(!wall.checkDisposed())
+        setLastPosition();
+}
+//=============================================================================
 void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
     //setOnLadder(false);

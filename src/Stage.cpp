@@ -241,8 +241,6 @@ void Stage::createEnemy(const int row, const int col){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
 
-    enemy = STUPID_ENEMY;
-
     switch(enemy)
     {
         case STUPID_ENEMY:

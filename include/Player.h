@@ -35,7 +35,6 @@ public:
     void addScore(int);
     void gravity(const float &);
 
-    virtual void isDisposed();
     using MovingObject::handleCollision;
 
     //---Collision Function Section---
