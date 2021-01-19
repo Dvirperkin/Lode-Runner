@@ -1,14 +1,14 @@
 #include "RandEnemy.h"
 #include <iostream>
 
-RandEnemy::RandEnemy(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize)
- : Enemy(location, texture, stageSize)
+RandEnemy::RandEnemy(const sf::Vector2f & location, const sf::Vector2i & stageSize)
+ : Enemy(location, ENEMY, stageSize)
  {
  }
 //=============================================================================
 sf::Vector2f RandEnemy::move(const float & timeElapsed) {
 
-    if(getInTheAir())
+    if(getInTheAir() || getLocked())
         return STAND;
 
     srand(time(NULL));

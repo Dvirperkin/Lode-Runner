@@ -2,9 +2,11 @@
 #include "Macros.h"
 #include <iostream>
 
-GameObject::GameObject(const sf::Vector2f & position, const sf::Texture & texture, const sf::Vector2i & stageSize)
-        : m_position(position), m_sprite(texture), m_isDisposed(false), m_lastReflection(REFLECTION_RIGHT)
+GameObject::GameObject(const sf::Vector2f & position, enum Textures_t gameObject, const sf::Vector2i & stageSize)
+        : m_position(position), m_isDisposed(false), m_lastReflection(REFLECTION_RIGHT)
 {
+    m_sprite = Textures::texturesObject().getSprite(gameObject);
+
     //Get the default size of the object to set the correct origin.
     m_objectSize.x = m_sprite.getTexture()->getSize().x;
     m_objectSize.y = m_sprite.getTexture()->getSize().y;
@@ -39,16 +41,16 @@ void GameObject::draw(sf::RenderWindow &window) const
 }
 //=============================================================================
 void GameObject::initPosition(const sf::Vector2f & position, const sf::Vector2i & stageSize) {
-    m_firstPosition.x = (position.x * WINDOW_WIDTH / stageSize.x) + WINDOW_WIDTH / (stageSize.x * 2);
-    m_firstPosition.y = (position.y * (WINDOW_HEIGHT - STAGE_DETAILS_SIZE) / stageSize.y) + STAGE_DETAILS_SIZE + WINDOW_HEIGHT / (stageSize.y * 2);
+    m_firstPosition.x = (position.x * ((double)WINDOW_WIDTH / stageSize.x)) + ((double)WINDOW_WIDTH / (stageSize.x * 2));
+    m_firstPosition.y = (position.y * (((double)WINDOW_HEIGHT - STAGE_DETAILS_SIZE) / stageSize.y)) + STAGE_DETAILS_SIZE + (((double)WINDOW_HEIGHT) / (stageSize.y * 2));
     m_sprite.setPosition(m_firstPosition);
     m_position = m_firstPosition;
     m_lastPosition = m_sprite.getPosition();
 }
 //=============================================================================
-void GameObject::changeSize(){
+void GameObject::changeSize(float factorY, float factorX){
     //Decrease the size of the object by 20%.
-    m_sprite.scale(0.8,0.8);
+    m_sprite.scale(factorX, factorY);
     m_objectSize.x = m_sprite.getScale().x * m_sprite.getTexture()->getSize().x;
     m_objectSize.y = m_sprite.getScale().y *  m_sprite.getTexture()->getSize().y;
 }
@@ -58,7 +60,9 @@ void GameObject::setFirstPosition() {
 }
 //=============================================================================
 void GameObject::setPosition(const sf::Vector2f & position) {
+    m_lastPosition = m_sprite.getPosition();
     m_sprite.setPosition(position);
+    m_position = m_sprite.getPosition();
 }
 //=============================================================================
 void GameObject::changePosition(const float & timeElapsed, const sf::Vector2f & direction, const sf::Vector2f & reflection){

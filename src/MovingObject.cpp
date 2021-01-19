@@ -12,8 +12,8 @@
 #include "EnemyGift.h"
 
 
-MovingObject::MovingObject(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
- : GameObject(location , texture, stageSize), m_inTheAir(false), m_onLadder(false), m_onPole(false){
+MovingObject::MovingObject(const sf::Vector2f &location, enum Textures_t object, const sf::Vector2i & stageSize)
+ : GameObject(location , object, stageSize), m_inTheAir(false), m_onLadder(false), m_onPole(false){
 
  }
 //=============================================================================
@@ -71,15 +71,9 @@ void MovingObject::handleCollision(Coin &gameObject, const sf::Vector2f & keyPre
     }
 }
 //=============================================================================
-void MovingObject::handleCollision(Wall &gameObject, const sf::Vector2f &) {
-    setInTheAir(false);
-
-    setLastPosition();
-}
-//=============================================================================
 void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
-    setOnLadder(false);
+    //setOnLadder(false);
 
     //Prevent to go up on pole.
     if(keyPressed == UP) {
@@ -104,8 +98,9 @@ void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPre
 //=============================================================================
 void MovingObject::handleCollision(Ladder &gameObject, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
+    //setOnPole(false);
 
-    if(gameObject.getGlobalBounds().contains(getPosition())) {
+    if(gameObject.getGlobalBounds().contains(getPosition()) || gameObject.getGlobalBounds().contains(getPosition().x, getPosition().y + getGlobalBounds().height/2)) {
 
         if (!getOnLadder() && (keyPressed == UP || keyPressed == DOWN)) {
             setPosition({gameObject.getPosition().x, getPosition().y});
@@ -115,10 +110,13 @@ void MovingObject::handleCollision(Ladder &gameObject, const sf::Vector2f & keyP
             return;
         }
 
-        else if (getOnLadder() && (keyPressed == RIGHT || keyPressed == LEFT)) {
+        if (getOnLadder() && (keyPressed == RIGHT || keyPressed == LEFT)) {
             setOnLadder(false);
         }
     }
+
+    else if(!getOnLadder() && (keyPressed == UP))
+        setLastPosition();
 
     //Change Sprite.
 }

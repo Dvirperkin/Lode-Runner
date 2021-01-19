@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -26,6 +27,9 @@ public:
     virtual void draw(sf::RenderWindow &) override;
     virtual void Music() override;
     void addEnemy();
+    void BreakWall(int, int);
+
+    sf::Vector2i getStageSize() const;
 
 private:
     StageDetails m_stageDetails;
@@ -35,9 +39,9 @@ private:
     std::vector<std::unique_ptr<Enemy>> m_enemies;
     std::vector<std::string> m_map;
     std::vector<std::vector<std::unique_ptr<StaticObject>>> m_staticObjects;
+    std::vector<Wall *> m_brokenWall;
     sf::Vector2i m_stageSize;
     sf::Clock m_clock;
-    Textures m_Textures;
     bool m_firstRun;
 
     int gameSituation();
@@ -45,6 +49,7 @@ private:
     void reloadStage();
     void createEnemy(const int, const int);
     void createGift(const int, const int);
+    void buildBrokenWall(float);
     void gravity(MovingObject &, const sf::Vector2f &, const float &, const sf::RenderWindow &);
     bool handleCollision(MovingObject &, const sf::Vector2f &, const sf::RenderWindow &);
     void drawMovingObject(sf::RenderWindow &) const;

@@ -15,9 +15,13 @@
 class Wall : public StaticObject {
 
 public:
-    Wall(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    Wall(const sf::Vector2f &, const sf::Vector2i &);
 
     using StaticObject::handleCollision;
+
+    virtual void isDisposed();
+    void reduceTime(float);
+    float getDisposedTime();
 
     //---Collision Function Section---
     virtual void handleCollision(Player &, const sf::Vector2f &) override;
@@ -26,5 +30,5 @@ public:
     virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) override;
 
 private:
-
+    sf::Time m_disposedTimer;
 };

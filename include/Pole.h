@@ -15,7 +15,7 @@
 class Pole : public StaticObject {
 
 public:
-    Pole(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    Pole(const sf::Vector2f &, const sf::Vector2i &);
 
     using StaticObject::handleCollision;
 

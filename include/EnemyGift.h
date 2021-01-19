@@ -6,7 +6,7 @@ class Stage;
 
 class EnemyGift : public Gift{
 public:
-    EnemyGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, Stage &);
+    EnemyGift(const sf::Vector2f &, const sf::Vector2i &, Stage &);
 
     virtual void activate() override;
 

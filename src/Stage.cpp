@@ -1,16 +1,17 @@
 #include "Stage.h"
 
-//=======================---Constructor Section---============================
+//==========================---Constructor Section---==========================
 Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true){
     srand(time(NULL));
     initializingStage();
 }
-//=======================---Public Function Section---========================
+
+//========================---Public Function Section---========================
 enum ScreenType_t Stage::display(sf::RenderWindow & window) {
 
     window.clear();
-    m_stageDetails.draw(window);
     draw(window);
+    m_stageDetails.draw(window, m_player);
     window.display();
 
     //Music();
@@ -25,6 +26,8 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
     if(timeElapsed > TIME_ELAPSED_LIMIT)
         timeElapsed = TIME_ELAPSED_LIMIT;
 
+    m_stageDetails.updateTimer(timeElapsed);
+
     for (auto event = sf::Event{}; window.pollEvent(event);) {
 
         if ((event.type == sf::Event::Closed) ||
@@ -34,12 +37,11 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
             break;
         }
     }
-
         //Player moves.
         auto keyPressed = m_player.move(timeElapsed);
+        m_player.Dig(*this);
 
         gravity(m_player, keyPressed, timeElapsed, window);
-
 
         //Check current situation in the game.
         auto situation = gameSituation();
@@ -54,7 +56,10 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
           gravity(*enemy, keyPressed, timeElapsed, window);
         }
 
-        return STAGE;
+    buildBrokenWall(timeElapsed);
+
+
+    return STAGE;
 }
 //=============================================================================
 void Stage::draw(sf::RenderWindow &window){
@@ -71,6 +76,7 @@ void Stage::Music() {
         m_backGroundMusic.play();
     }
 }
+
 //=======================---Private Function Section---========================
 int Stage::gameSituation() {
 
@@ -79,6 +85,7 @@ int Stage::gameSituation() {
         //Load next stage.
         if(!m_levelFile.eof()) {
             m_player.levelUP();
+            m_stageDetails.setStageNumber(m_player.getLevel());
             auto PlayerLives = m_player.getLive();
             auto PlayerScore = m_player.getScore();
             auto PlayerLevel = m_player.getLevel();
@@ -126,12 +133,12 @@ void Stage::initializingStage(){
     m_staticObjects.clear();
     m_stageDetails.resetMaxCoin();
 
-    m_levelFile >> m_stageSize.x >> m_stageSize.y >> timer;
+    m_levelFile >> m_stageSize.y >> m_stageSize.x >> timer;
 
     m_levelFile.get();
 
     m_stageDetails.setTimer(timer);
-    m_stageDetails.setStageNumber(START_LEVEL);
+
 
     for(int row = 0; row < m_stageSize.y; row++)
     {
@@ -140,14 +147,12 @@ void Stage::initializingStage(){
 
         m_staticObjects.push_back({});
 
-        for(int col = 0; col < m_stageSize.x; col++)
-        {
-            switch(m_map[row][col])
-            {
+        for(int col = 0; col < m_stageSize.x; col++){
+            switch(m_map[row][col]){
                 case PLAYER_SYMBOL:
-                    m_player = Player(sf::Vector2f(col , row), m_Textures.getPlayerTexture(), m_stageSize);
+                    m_player = Player(sf::Vector2f(col , row), m_stageSize);
                     m_player.levelUP();
-                    m_player.changeSize();
+                    m_player.changeSize(MOVING_FACTOR, MOVING_FACTOR);
                     m_staticObjects[row].push_back(nullptr);
                     break;
 
@@ -157,20 +162,23 @@ void Stage::initializingStage(){
                     break;
 
                 case COIN_SYMBOL:
-                    m_staticObjects[row].push_back(std::make_unique<Coin>(sf::Vector2f(col, row) , m_Textures.getCoinTexture(), m_stageSize, m_stageDetails));
+                    m_staticObjects[row].push_back(std::make_unique<Coin>(sf::Vector2f(col, row), m_stageSize, m_stageDetails));
                     m_stageDetails.incCoin();
                     break;
 
                 case WALL_SYMBOL:
-                    m_staticObjects[row].push_back(std::make_unique<Wall>(sf::Vector2f(col, row) , m_Textures.getWallTexture(), m_stageSize));
+                    m_staticObjects[row].push_back(std::make_unique<Wall>(sf::Vector2f(col, row), m_stageSize));
+                    m_staticObjects[row][col]->setPosition({m_staticObjects[row][col]->getPosition().x,
+                                                            m_staticObjects[row][col]->getPosition().y + OFFSET_Y});
+
                     break;
 
                 case LADDER_SYMBOL:
-                    m_staticObjects[row].push_back(std::make_unique<Ladder>(sf::Vector2f(col, row) , m_Textures.getLadderTexture(), m_stageSize));
+                    m_staticObjects[row].push_back(std::make_unique<Ladder>(sf::Vector2f(col, row), m_stageSize));
                     break;
 
                 case POLE_SYMBOL:
-                    m_staticObjects[row].push_back(std::make_unique<Pole>(sf::Vector2f(col, row) , m_Textures.getPoleTexture(), m_stageSize));
+                    m_staticObjects[row].push_back(std::make_unique<Pole>(sf::Vector2f(col, row), m_stageSize));
                     break;
 
                 case GIFT_SYMBOL:
@@ -192,8 +200,8 @@ void Stage::reloadStage() {
 
     for(auto rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++){
         for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
-            if(m_staticObjects[rowStaticObject][colStaticObject])
-            {
+            if(m_staticObjects[rowStaticObject][colStaticObject]){
+
                 m_staticObjects[rowStaticObject][colStaticObject]->setFirstPosition();
 
                 //If the current static object was taken return it.
@@ -211,7 +219,8 @@ void Stage::reloadStage() {
             currentEnemy--;
         }
 
-        m_enemies[currentEnemy]->setFirstPosition();
+        else
+            m_enemies[currentEnemy]->setFirstPosition();
     }
 
     m_stageDetails.reloadStageDetails();
@@ -221,30 +230,31 @@ void Stage::createEnemy(const int row, const int col){
 
     auto enemy = (enum EnemyType_t) (rand() % MOD3);
 
+    enemy = STUPID_ENEMY;
+
     switch(enemy)
     {
         case STUPID_ENEMY:
-            m_enemies.push_back(std::make_unique<StupidEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
+            m_enemies.push_back(std::make_unique<StupidEnemy>(sf::Vector2f(col, row), m_stageSize));
             break;
 
         case RAND_ENEMY:
-            m_enemies.push_back(std::make_unique<RandEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
+            m_enemies.push_back(std::make_unique<RandEnemy>(sf::Vector2f(col, row), m_stageSize));
             break;
 
         case SMART_ENEMY:
-            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row) , m_Textures.getEnemyTexture(), m_stageSize));
+            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row), m_stageSize));
             break;
     }
 
-    m_enemies[m_enemies.size() - 1]->changeSize();
+   m_enemies[m_enemies.size() - 1]->changeSize(MOVING_FACTOR, MOVING_FACTOR);
 }
 //=============================================================================
 void Stage::addEnemy() {
 
     for(auto rowStaticObject = rand() % m_staticObjects.size(); rowStaticObject < m_staticObjects.size(); rowStaticObject++){
         for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
-            if(!m_staticObjects[rowStaticObject][colStaticObject])
-            {
+            if(!m_staticObjects[rowStaticObject][colStaticObject]){
                 createEnemy(rowStaticObject, colStaticObject);
                 m_enemies[m_enemies.size() - 1]->setAddedFromGift();
                 return;
@@ -253,29 +263,59 @@ void Stage::addEnemy() {
     }
 }
 //=============================================================================
+void Stage::BreakWall(int staticObjectRow, int staticObjectCol) {
+
+    if (staticObjectRow >= m_staticObjects.size() || staticObjectCol >= m_staticObjects[staticObjectRow].size() ||
+        staticObjectCol < 0 || !m_staticObjects[staticObjectRow][staticObjectCol])
+        return;
+
+    if (!m_staticObjects[staticObjectRow][staticObjectCol]->checkDisposed() &&
+        typeid(*m_staticObjects[staticObjectRow][staticObjectCol]) == typeid(Wall)) {
+        m_staticObjects[staticObjectRow][staticObjectCol]->isDisposed();
+        m_brokenWall.push_back(dynamic_cast<Wall *>(m_staticObjects[staticObjectRow][staticObjectCol].get()));
+    }
+}
+//=============================================================================
+sf::Vector2i Stage::getStageSize() const{
+    return m_stageSize;
+}
+//=============================================================================
 void Stage::createGift(const int row, const int col){
 
     auto gift = (enum GiftType_t) (rand() % MOD4);
 
-    gift = LIVE_GIFT;
-
     switch(gift)
     {
         case LIVE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_player));
+            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row), m_stageSize, m_player));
             break;
 
         case SCORE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_player));
+            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row), m_stageSize, m_player));
             break;
 
         case TIME_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, m_stageDetails));
+            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row), m_stageSize, m_stageDetails));
             break;
 
         case ENEMY_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row) , m_Textures.getGiftTexture(), m_stageSize, *this));
+            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row), m_stageSize, *this));
             break;
+    }
+}
+//=============================================================================
+void Stage::buildBrokenWall(float elapsedTime) {
+
+    for(auto index = 0; index < m_brokenWall.size(); index++)
+    {
+        if(m_brokenWall[index]) {
+            m_brokenWall[index]->reduceTime(elapsedTime);
+
+            if(m_brokenWall[index]->getDisposedTime() <= 0) {
+                m_brokenWall[index]->isDisposed();
+                m_brokenWall.erase(m_brokenWall.begin() + index);
+            }
+        }
     }
 }
 //=============================================================================
@@ -296,7 +336,7 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
     bool collide = false;
 
     auto arrPosition = sf::Vector2i((movingObject.getPosition().x / WINDOW_WIDTH) * m_stageSize.x,
-                                    (movingObject.getPosition().y / WINDOW_HEIGHT) * m_stageSize.y);
+                                    ((movingObject.getPosition().y - STAGE_DETAILS_SIZE) / (WINDOW_HEIGHT - STAGE_DETAILS_SIZE)) * m_stageSize.y);
 
     //Checks for collision with nearby static object.
     for(auto rowStaticObject = arrPosition.y - 1; rowStaticObject <= arrPosition.y + 1; rowStaticObject++) {
@@ -305,14 +345,24 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
             if (rowStaticObject >= 0 && rowStaticObject < m_staticObjects.size() && colStaticObject >= 0 &&
                 colStaticObject < m_staticObjects[rowStaticObject].size()) {
 
-                if (!m_staticObjects[rowStaticObject][colStaticObject] || m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())
+                //Condition for disposed objects or empty slots.
+                if (!m_staticObjects[rowStaticObject][colStaticObject] ||
+                    (m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed() &&
+                    typeid(*m_staticObjects[rowStaticObject][colStaticObject]) != typeid(Wall)))
                     continue;
 
+                //Checks if there is a collision between the moving object to the current static object.
                 if (movingObject.checkCollision(m_staticObjects[rowStaticObject][colStaticObject]->getGlobalBounds())) {
                     collide = true;
 
                     movingObject.handleCollision(*m_staticObjects[rowStaticObject][colStaticObject], keyPressed);
                 }
+
+                if(!m_player.getOnLadder() && !m_player.getOnPole() &&
+                    m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed() &&
+                    typeid(*m_staticObjects[rowStaticObject][colStaticObject]) == typeid(Wall) &&
+                    typeid(movingObject) == typeid(Player))
+                    collide = false;
             }
         }
     }

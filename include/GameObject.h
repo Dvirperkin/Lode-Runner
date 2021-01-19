@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Textures.h"
 
 class Player;
 class StupidEnemy;
@@ -18,7 +19,7 @@ class GameObject {
 
 public:
     GameObject() = default;
-    GameObject(const sf::Vector2f &, const sf::Texture &, const sf::Vector2i &);
+    GameObject(const sf::Vector2f &, enum Textures_t, const sf::Vector2i &);
 
     void initPosition(const sf::Vector2f &, const sf::Vector2i &);
     virtual void draw (sf::RenderWindow &) const;
@@ -30,12 +31,13 @@ public:
 
     void setFirstPosition();
     void setPosition(const sf::Vector2f &);
-    void changePosition(const float &, const sf::Vector2f & , const sf::Vector2f &);
     void setLastPosition();
 
-    void isDisposed();
+    void changePosition(const float &, const sf::Vector2f & , const sf::Vector2f &);
     bool checkDisposed() const;
-    void changeSize();
+    void changeSize(float, float);
+
+    virtual void isDisposed();
 
     //---Collision Function Section---
     bool checkCollision(const sf::FloatRect &);
