@@ -1,8 +1,8 @@
 #include "ScoreGift.h"
 #include "Player.h"
 
-ScoreGift::ScoreGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize, Player & player)
- : Gift(location, texture, stageSize){
+ScoreGift::ScoreGift(const sf::Vector2f & location, const sf::Vector2i & stageSize, Player & player)
+ : Gift(location, GIFT, stageSize){
     m_player = &player;
  }
 //=============================================================================

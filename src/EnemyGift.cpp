@@ -2,8 +2,8 @@
 #include "Stage.h"
 #include "Player.h"
 
-EnemyGift::EnemyGift(const sf::Vector2f & location, const sf::Texture & texture, const sf::Vector2i & stageSize , Stage & stage)
- : Gift(location, texture, stageSize){
+EnemyGift::EnemyGift(const sf::Vector2f & location, const sf::Vector2i & stageSize , Stage & stage)
+ : Gift(location, GIFT, stageSize){
 
     m_stage = &stage;
 }

@@ -4,7 +4,7 @@
 
 class LiveGift : public Gift {
 public:
-    LiveGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, Player &);
+    LiveGift(const sf::Vector2f &, const sf::Vector2i &, Player &);
 
     virtual void activate() override;
 

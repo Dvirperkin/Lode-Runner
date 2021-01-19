@@ -14,7 +14,7 @@
 class SmartEnemy : public Enemy {
 public:
 
-    SmartEnemy(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    SmartEnemy(const sf::Vector2f &, sf::Vector2i);
     virtual sf::Vector2f move(const float &) override;
     virtual void gravity(const float & ) override;
 

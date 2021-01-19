@@ -1,7 +1,7 @@
 #include "StaticObject.h"
 
-StaticObject::StaticObject(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
-    : GameObject(location , texture, stageSize)
+StaticObject::StaticObject(const sf::Vector2f &location, enum Textures_t staticObject, const sf::Vector2i & stageSize)
+    : GameObject(location , staticObject, stageSize)
 {
 }
 //=============================================================================

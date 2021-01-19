@@ -17,7 +17,7 @@
 class Ladder : public StaticObject {
 
 public:
-    Ladder(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    Ladder(const sf::Vector2f &, const sf::Vector2i &);
 
     using StaticObject::handleCollision;
 

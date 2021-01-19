@@ -17,7 +17,7 @@
 class Coin : public SpecialObject {
 
 public:
-    Coin(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, StageDetails &);
+    Coin(const sf::Vector2f &, const sf::Vector2i &, StageDetails &);
     virtual void activate() override;
 
     using SpecialObject::handleCollision;

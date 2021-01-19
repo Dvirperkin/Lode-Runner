@@ -4,7 +4,7 @@
 
 class ScoreGift : public Gift {
 public:
-    ScoreGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, Player &);
+    ScoreGift(const sf::Vector2f &, const sf::Vector2i &, Player &);
 
     virtual void activate() override;
 

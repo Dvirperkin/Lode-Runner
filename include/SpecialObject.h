@@ -3,7 +3,7 @@
 
 class SpecialObject : public StaticObject{
 public:
-    SpecialObject(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    SpecialObject(const sf::Vector2f & , enum Textures_t, const sf::Vector2i &);
 
     virtual void activate() = 0;
 

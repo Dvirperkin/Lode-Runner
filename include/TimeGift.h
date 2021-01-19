@@ -5,7 +5,7 @@
 
 class TimeGift : public Gift{
 public:
-    TimeGift(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &, StageDetails &);
+    TimeGift(const sf::Vector2f & , const sf::Vector2i &, StageDetails &);
 
     virtual void activate() override;
 

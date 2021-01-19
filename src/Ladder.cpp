@@ -1,7 +1,7 @@
 #include "Ladder.h"
 
-Ladder::Ladder(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize)
-    : StaticObject(location , texture, stageSize)
+Ladder::Ladder(const sf::Vector2f &location, const sf::Vector2i & stageSize)
+    : StaticObject(location , LADDER, stageSize)
 {
 
 }

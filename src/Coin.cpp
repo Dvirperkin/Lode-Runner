@@ -1,8 +1,8 @@
 #include "Coin.h"
 #include "StageDetails.h"
 
-Coin::Coin(const sf::Vector2f &location, const sf::Texture &texture, const sf::Vector2i & stageSize, StageDetails & stageDetails)
-    : SpecialObject(location, texture, stageSize)
+Coin::Coin(const sf::Vector2f &location, const sf::Vector2i & stageSize, StageDetails & stageDetails)
+    : SpecialObject(location, COIN, stageSize)
 {
     m_stageDetails = &stageDetails;
 }

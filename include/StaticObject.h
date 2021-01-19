@@ -4,7 +4,7 @@
 class StaticObject : public GameObject {
 
 public:
-    StaticObject(const sf::Vector2f & , const sf::Texture &, const sf::Vector2i &);
+    StaticObject(const sf::Vector2f & , enum Textures_t, const sf::Vector2i &);
 
     //---Collision Function Section---
     virtual void handleCollision(GameObject &, const sf::Vector2f &) override;
