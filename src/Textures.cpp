@@ -11,37 +11,17 @@ Textures::Textures()
     m_textures[LADDER].loadFromFile("Ladder.png");
     m_textures[POLE].loadFromFile("Pole.png");
     m_textures[GIFT].loadFromFile("Gift.png");
+    m_textures[STAGE_DETAILS].loadFromFile("StageDetails.jpg");
 
 }
 //=======================================================================
-const sf::Texture &Textures::getPlayerTexture() const
-{
-    return m_textures[PLAYER];
+Textures & Textures::texturesObject(){
+    static Textures texturesObject;
+
+    return texturesObject;
 }
 //=======================================================================
-const sf::Texture &Textures::getEnemyTexture() const
-{
-    return m_textures[ENEMY];
-}
-//=======================================================================
-const sf::Texture &Textures::getWallTexture() const
-{
-    return m_textures[WALL];
-}
-//=======================================================================
-const sf::Texture &Textures::getCoinTexture() const {
-    return m_textures[COIN];
-}
-//=======================================================================
-const sf::Texture &Textures::getLadderTexture() const {
-    return m_textures[LADDER];
-}
-//=======================================================================
-const sf::Texture &Textures::getPoleTexture() const {
-    return m_textures[POLE];
-}
-//=======================================================================
-const sf::Texture &Textures::getGiftTexture() const {
-    return m_textures[GIFT];
+const sf::Sprite Textures::getSprite(enum Textures_t image) {
+    return sf::Sprite(m_textures[image]);
 }
 //=======================================================================
