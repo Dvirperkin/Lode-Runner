@@ -14,10 +14,9 @@ public:
     void reloadStageDetails();
 
     int getCoin() const;
-
+    int getTimer() const;
     void setStageNumber(const int);
     void setTimer(const int);
-
 
     void incCoin();
     void decCoin();

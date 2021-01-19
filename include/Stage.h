@@ -35,6 +35,7 @@ private:
     StageDetails m_stageDetails;
     std::fstream m_levelFile;
     sf::Music m_backGroundMusic;
+    sf::Sprite m_backGround;
     Player m_player;
     std::vector<std::unique_ptr<Enemy>> m_enemies;
     std::vector<std::string> m_map;

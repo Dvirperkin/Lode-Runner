@@ -1,7 +1,7 @@
 #include "StupidEnemy.h"
 #include<iostream>
 StupidEnemy::StupidEnemy(const sf::Vector2f & location, const sf::Vector2i & stageSize)
- : Enemy(location, ENEMY, stageSize), m_direction(true)
+ : Enemy(location, STUPID_ENEMY_TEXT, stageSize), m_direction(true)
  {}
 //==============================================================================
 sf::Vector2f StupidEnemy::move(const float & timeElapsed) {

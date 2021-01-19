@@ -9,7 +9,7 @@ GameController::GameController() : m_currentScreen(MAIN_MENU){
 //=============================================================================
 void GameController::Run() {
 
-    auto window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Lode Runner");
+    auto window = sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Lode Runner", sf::Style::Fullscreen);
     window.setFramerateLimit(60);
 
     while(window.isOpen())

@@ -2,7 +2,7 @@
 #include <iostream>
 
 RandEnemy::RandEnemy(const sf::Vector2f & location, const sf::Vector2i & stageSize)
- : Enemy(location, ENEMY, stageSize)
+ : Enemy(location, RAND_ENEMY_TEXT, stageSize)
  {
  }
 //=============================================================================

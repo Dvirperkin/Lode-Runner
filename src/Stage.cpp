@@ -1,8 +1,14 @@
 #include "Stage.h"
 
 //==========================---Constructor Section---==========================
-Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true){
+Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true),
+                 m_backGround(Textures::texturesObject().getSprite(STAGE_BACKGROUND)){
     srand(time(NULL));
+
+    m_backGround.scale(WINDOW_WIDTH / m_backGround.getGlobalBounds().width,
+                       WINDOW_HEIGHT / m_backGround.getGlobalBounds().height);
+
+
     initializingStage();
 }
 
@@ -63,6 +69,7 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
 }
 //=============================================================================
 void Stage::draw(sf::RenderWindow &window){
+    window.draw(m_backGround);
     drawStaticObjects(window);
     drawMovingObject(window);
 }
@@ -104,6 +111,10 @@ int Stage::gameSituation() {
             return MAIN_MENU;
         }
     }
+
+    //Time is up.
+    if(m_stageDetails.getTimer() == 0)
+        m_player.isDisposed();
 
     if(m_player.checkDisposed()) {
         //If the player disqualified return to the main menu
@@ -256,6 +267,8 @@ void Stage::addEnemy() {
         for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
             if(!m_staticObjects[rowStaticObject][colStaticObject]){
                 createEnemy(rowStaticObject, colStaticObject);
+                m_enemies[m_enemies.size() - 1]->setPosition({m_enemies[m_enemies.size() - 1]->getPosition().x,
+                                                              m_enemies[m_enemies.size() - 1]->getPosition().y + OFFSET_Y});
                 m_enemies[m_enemies.size() - 1]->setAddedFromGift();
                 return;
             }

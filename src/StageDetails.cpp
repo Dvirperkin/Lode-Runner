@@ -115,21 +115,18 @@ int StageDetails::getCoin() const{
     return m_coin;
 }
 //===========================================================================
+int StageDetails::getTimer() const{
+    return m_countDown;
+}
+//===========================================================================
 void StageDetails::setStageNumber(const int stageNumber) {
     if(stageNumber > 0)
         m_stageNumber = stageNumber;
 }
 //===========================================================================
 void StageDetails::setTimer(const int timer) {
-    if (timer >= 0) {
-        m_startCountDown = timer;
-        m_countDown = timer;
-    }
-
-    if(timer < 0) {
-        m_startCountDown = 0;
-        m_countDown = 0;
-    }
+    m_startCountDown = timer;
+    m_countDown = timer;
 }
 //===========================================================================
 void StageDetails::incCoin() {

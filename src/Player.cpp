@@ -92,6 +92,11 @@ void Player::addScore(int score) {
         m_score += score;
 }
 //=============================================================================
+void Player::isDisposed() {
+    GameObject::isDisposed();
+    m_lives--;
+}
+//=============================================================================
 void Player::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
     if(this == &gameObject)
         return;
@@ -108,7 +113,7 @@ void Player::handleCollision(StupidEnemy &gameObject, const sf::Vector2f & keyPr
     }
 
     isDisposed();
-    m_lives--;
+
     std::cout << m_lives << std::endl;
     std::cout << "StupidEnemy" << std::endl;
 }
@@ -122,7 +127,7 @@ void Player::handleCollision(RandEnemy &gameObject, const sf::Vector2f & keyPres
     }
 
     isDisposed();
-    m_lives--;
+
     std::cout << m_lives << std::endl;
     std::cout << "RandEnemy" << std::endl;
 }
@@ -136,7 +141,7 @@ void Player::handleCollision(SmartEnemy &gameObject, const sf::Vector2f & keyPre
     }
 
     isDisposed();
-    m_lives--;
+
     std::cout << m_lives << std::endl;
     std::cout << "SmartEnemy" << std::endl;
 }
@@ -154,7 +159,6 @@ void Player::handleCollision(Wall & wall, const sf::Vector2f &) {
     if(!wall.checkDisposed()) {
         if (wall.getGlobalBounds().contains(getPosition())) {
             isDisposed();
-            m_lives--;
         }
         setLastPosition();
     }

@@ -1,6 +1,5 @@
 #include "GameObject.h"
 #include "Macros.h"
-#include <iostream>
 
 GameObject::GameObject(const sf::Vector2f & position, enum Textures_t gameObject, const sf::Vector2i & stageSize)
         : m_position(position), m_isDisposed(false), m_lastReflection(REFLECTION_RIGHT)
@@ -66,8 +65,6 @@ void GameObject::setPosition(const sf::Vector2f & position) {
 }
 //=============================================================================
 void GameObject::changePosition(const float & timeElapsed, const sf::Vector2f & direction, const sf::Vector2f & reflection){
-
-    auto checkMove = m_lastReflection + (direction * SPEED_PER_SECOND * timeElapsed);
 
     m_lastPosition = m_sprite.getPosition();
     m_sprite.move(direction * SPEED_PER_SECOND * timeElapsed);
