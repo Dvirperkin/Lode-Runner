@@ -27,13 +27,14 @@ public:
     int getScore() const;
     int getLevel() const;
 
-    void setLives(int);
+    void setLive(int);
     void setLevel(int);
 
     void levelUP();
     void addLive();
     void addScore(int);
     void gravity(const float &);
+    void enemyCollision(const Enemy &, const sf::Vector2f &);
 
     using MovingObject::handleCollision;
 
