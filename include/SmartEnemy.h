@@ -13,8 +13,7 @@
 
 class SmartEnemy : public Enemy {
 public:
-
-    SmartEnemy(const sf::Vector2f &, sf::Vector2i);
+    SmartEnemy(const sf::Vector2f &, Stage &);
     virtual sf::Vector2f move(const float &) override;
     virtual void gravity(const float & ) override;
 
@@ -25,4 +24,10 @@ public:
     virtual void handleCollision(Player &, const sf::Vector2f &) override;
 
 private:
+    float m_timeLimit;
+    bool m_firstRun;
+    Stage * m_stage;
+    float m_time;
+    std::pair<sf::Vector2i , sf::Vector2i > m_lastPair;
+    std::pair<sf::Vector2i , sf::Vector2i > m_currPair;
 };

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <experimental/vector>
+#include "GameGraph.h"
 #include "Window.h"
 #include "Player.h"
 #include "StupidEnemy.h"
@@ -25,29 +26,33 @@ public:
     Stage();
     virtual enum ScreenType_t display(sf::RenderWindow &) override;
     virtual void draw(sf::RenderWindow &) override;
-    virtual void Music() override;
+
     void addEnemy();
     void BreakWall(int, int);
 
     sf::Vector2i getStageSize() const;
 
+    GameGraph & getGameGraph ();
+    graphStaticObjects_t getStaticObject (const int & , const int &) const;
+
 private:
     StageDetails m_stageDetails;
     std::fstream m_levelFile;
-    sf::Music m_backGroundMusic;
     sf::Sprite m_backGround;
     Player m_player;
     std::vector<std::unique_ptr<Enemy>> m_enemies;
-    std::vector<std::string> m_map;
     std::vector<std::vector<std::unique_ptr<StaticObject>>> m_staticObjects;
     std::vector<Wall *> m_brokenWall;
     sf::Vector2i m_stageSize;
     sf::Clock m_clock;
     bool m_firstRun;
+    std::unique_ptr<GameGraph> m_graph;
+    sf::Sprite m_winScreen;
 
-    int gameSituation();
+    int gameSituation(sf::RenderWindow &);
     void initializingStage();
     void reloadStage();
+    void restartGame(sf::RenderWindow &, sf::Sprite &, enum Sounds_t);
     void createEnemy(const int, const int);
     void createGift(const int, const int);
     void buildBrokenWall(float);

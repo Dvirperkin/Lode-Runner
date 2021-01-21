@@ -2,14 +2,20 @@
 
 //==========================---Constructor Section---==========================
 Stage::Stage() : m_levelFile("Levels.txt"), m_firstRun(true),
-                 m_backGround(Textures::texturesObject().getSprite(STAGE_BACKGROUND)){
+                 m_backGround(Textures::texturesObject().getSprite(STAGE_BACKGROUND)),
+                 m_winScreen(Textures::texturesObject().getSprite(WIN_SCREEN)),
+                 m_graph(std::make_unique<GameGraph>(*this)){
+
     srand(time(NULL));
 
     m_backGround.scale(WINDOW_WIDTH / m_backGround.getGlobalBounds().width,
                        WINDOW_HEIGHT / m_backGround.getGlobalBounds().height);
 
+    m_winScreen.scale(WINDOW_WIDTH / m_winScreen.getGlobalBounds().width,
+                       WINDOW_HEIGHT / m_winScreen.getGlobalBounds().height);
 
     initializingStage();
+    m_graph->initializeData();
 }
 
 //========================---Public Function Section---========================
@@ -20,7 +26,8 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
     m_stageDetails.draw(window, m_player);
     window.display();
 
-    //Music();
+    if(!Sound::soundObject().checkMusicPlay(STAGE_MUSIC))
+        Sound::soundObject().playMusic(STAGE_MUSIC);
 
     if(m_firstRun) {
         m_clock.restart().asSeconds();
@@ -33,6 +40,11 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
         timeElapsed = TIME_ELAPSED_LIMIT;
 
     m_stageDetails.updateTimer(timeElapsed);
+
+    //Initialize game graph.
+    m_graph->initializeData();
+    m_graph->BFS(sf::Vector2i((m_player.getPosition().x / WINDOW_WIDTH) * m_stageSize.x,
+                              ((m_player.getPosition().y - STAGE_DETAILS_SIZE) / (WINDOW_HEIGHT - STAGE_DETAILS_SIZE)) * m_stageSize.y));
 
     for (auto event = sf::Event{}; window.pollEvent(event);) {
 
@@ -50,7 +62,7 @@ enum ScreenType_t Stage::display(sf::RenderWindow & window) {
         gravity(m_player, keyPressed, timeElapsed, window);
 
         //Check current situation in the game.
-        auto situation = gameSituation();
+        auto situation = gameSituation(window);
 
         if(situation != DO_NOTHING)
             return (enum ScreenType_t) situation;
@@ -73,41 +85,32 @@ void Stage::draw(sf::RenderWindow &window){
     drawStaticObjects(window);
     drawMovingObject(window);
 }
-//=============================================================================
-void Stage::Music() {
-    if (m_backGroundMusic.getStatus() != m_backGroundMusic.Playing) {
-        if (!m_backGroundMusic.openFromFile("StageMusic.ogg"))
-            exit(EXIT_FAILURE);
-
-        m_backGroundMusic.setLoop(true);
-        m_backGroundMusic.play();
-    }
-}
-
 //=======================---Private Function Section---========================
-int Stage::gameSituation() {
+int Stage::gameSituation(sf::RenderWindow & window) {
 
     //The stage is complete.
     if(m_stageDetails.getCoin() == 0) {
+        Sound::soundObject().stopSound(LOW_TIME);
+        Sound::soundObject().playSound(LEVELUP);
+        sf::sleep(sf::seconds(LEVELUP_WAITING_TIME));
+
         //Load next stage.
         if(!m_levelFile.eof()) {
             m_player.levelUP();
-            m_stageDetails.setStageNumber(m_player.getLevel());
             auto PlayerLives = m_player.getLive();
             auto PlayerScore = m_player.getScore();
             auto PlayerLevel = m_player.getLevel();
             initializingStage();
-            m_player.setLives(PlayerLives);
+            m_player.setLive(PlayerLives);
             m_player.addScore(PlayerScore);
             m_player.setLevel(PlayerLevel);
+            m_stageDetails.setStageNumber(m_player.getLevel());
             return STAGE;
         }
 
         //The player wins, and returns to the main menu.
         else {
-            m_levelFile.seekg(0, std::ios::beg);
-            initializingStage();
-            reloadStage();
+            restartGame(window, m_winScreen, WIN);
             return MAIN_MENU;
         }
     }
@@ -117,12 +120,14 @@ int Stage::gameSituation() {
         m_player.isDisposed();
 
     if(m_player.checkDisposed()) {
+
+        sf::sleep(sf::seconds(DEAD_WAITING_TIME));
+        Sound::soundObject().stopSound(LOW_TIME);
+
         //If the player disqualified return to the main menu
         //and reloads the first level to start a new game.
         if(m_player.getLive() == 0) {
-            m_levelFile.seekg(0, std::ios::beg);
-            initializingStage();
-            reloadStage();
+            restartGame(window, m_winScreen, GAME_OVER);
             return MAIN_MENU;
         }
 
@@ -131,7 +136,7 @@ int Stage::gameSituation() {
         return STAGE;
     }
 
-    return -1;
+    return DO_NOTHING;
 }
 //=============================================================================
 void Stage::initializingStage(){
@@ -139,8 +144,8 @@ void Stage::initializingStage(){
     std::string line;
 
     //Initialize vectors and coins.
-    m_map.clear();
     m_enemies.clear();
+    m_brokenWall.clear();
     m_staticObjects.clear();
     m_stageDetails.resetMaxCoin();
 
@@ -154,15 +159,15 @@ void Stage::initializingStage(){
     for(int row = 0; row < m_stageSize.y; row++)
     {
         getline(m_levelFile,line);
-        m_map.push_back(line);
 
         m_staticObjects.push_back({});
 
         for(int col = 0; col < m_stageSize.x; col++){
-            switch(m_map[row][col]){
+            switch(line[col]){
                 case PLAYER_SYMBOL:
                     m_player = Player(sf::Vector2f(col , row), m_stageSize);
                     m_player.levelUP();
+                    m_stageDetails.setStageNumber(m_player.getLevel());
                     m_player.changeSize(MOVING_FACTOR, MOVING_FACTOR);
                     m_staticObjects[row].push_back(nullptr);
                     break;
@@ -179,8 +184,6 @@ void Stage::initializingStage(){
 
                 case WALL_SYMBOL:
                     m_staticObjects[row].push_back(std::make_unique<Wall>(sf::Vector2f(col, row), m_stageSize));
-                    m_staticObjects[row][col]->setPosition({m_staticObjects[row][col]->getPosition().x,
-                                                            m_staticObjects[row][col]->getPosition().y + OFFSET_Y});
 
                     break;
 
@@ -206,14 +209,14 @@ void Stage::initializingStage(){
 //=============================================================================
 void Stage::reloadStage() {
 
-    m_player.setFirstPosition();
+    m_player.returnFirstPosition();
     m_player.isDisposed();
 
     for(auto rowStaticObject = 0; rowStaticObject < m_staticObjects.size(); rowStaticObject++){
         for(auto colStaticObject = 0; colStaticObject < m_staticObjects[rowStaticObject].size(); colStaticObject++){
             if(m_staticObjects[rowStaticObject][colStaticObject]){
 
-                m_staticObjects[rowStaticObject][colStaticObject]->setFirstPosition();
+                m_staticObjects[rowStaticObject][colStaticObject]->returnFirstPosition();
 
                 //If the current static object was taken return it.
                 if(m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed())
@@ -221,6 +224,8 @@ void Stage::reloadStage() {
             }
         }
     }
+
+    m_brokenWall.clear();
 
     for(auto currentEnemy = 0; currentEnemy < m_enemies.size(); currentEnemy++) {
 
@@ -231,10 +236,25 @@ void Stage::reloadStage() {
         }
 
         else
-            m_enemies[currentEnemy]->setFirstPosition();
+            m_enemies[currentEnemy]->returnFirstPosition();
     }
 
     m_stageDetails.reloadStageDetails();
+}
+//=============================================================================
+void Stage::restartGame(sf::RenderWindow & window, sf::Sprite & sprite, enum Sounds_t sound) {
+
+    Sound::soundObject().stopMusic(STAGE_MUSIC);
+
+    m_levelFile.seekg(0, std::ios::beg);
+    initializingStage();
+    reloadStage();
+
+    window.clear();
+    window.draw(sprite);
+    window.display();
+    Sound::soundObject().playSound(sound);
+    sf::sleep(sf::seconds(FINISH_WAITING_TIME));
 }
 //=============================================================================
 void Stage::createEnemy(const int row, const int col){
@@ -252,7 +272,7 @@ void Stage::createEnemy(const int row, const int col){
             break;
 
         case SMART_ENEMY:
-            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row), m_stageSize));
+            m_enemies.push_back(std::make_unique<SmartEnemy>(sf::Vector2f(col, row),*this));
             break;
     }
 
@@ -285,6 +305,8 @@ void Stage::BreakWall(int staticObjectRow, int staticObjectCol) {
         m_staticObjects[staticObjectRow][staticObjectCol]->isDisposed();
         m_brokenWall.push_back(dynamic_cast<Wall *>(m_staticObjects[staticObjectRow][staticObjectCol].get()));
     }
+
+    Sound::soundObject().playSound(OPEN_CURTAIN);
 }
 //=============================================================================
 sf::Vector2i Stage::getStageSize() const{
@@ -298,19 +320,19 @@ void Stage::createGift(const int row, const int col){
     switch(gift)
     {
         case LIVE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row), m_stageSize, m_player));
+            m_staticObjects[row].push_back(std::make_unique<LiveGift>(sf::Vector2f(col, row), getStageSize(), m_player));
             break;
 
         case SCORE_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row), m_stageSize, m_player));
+            m_staticObjects[row].push_back(std::make_unique<ScoreGift>(sf::Vector2f(col, row), getStageSize(), m_player));
             break;
 
         case TIME_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row), m_stageSize, m_stageDetails));
+            m_staticObjects[row].push_back(std::make_unique<TimeGift>(sf::Vector2f(col, row), getStageSize(), m_stageDetails));
             break;
 
         case ENEMY_GIFT:
-            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row), m_stageSize, *this));
+            m_staticObjects[row].push_back(std::make_unique<EnemyGift>(sf::Vector2f(col, row), getStageSize(), *this));
             break;
     }
 }
@@ -369,6 +391,7 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
                     movingObject.handleCollision(*m_staticObjects[rowStaticObject][colStaticObject], keyPressed);
                 }
 
+                //Check if the player is in a disappear wall.
                 if(!m_player.getOnLadder() && !m_player.getOnPole() &&
                     m_staticObjects[rowStaticObject][colStaticObject]->checkDisposed() &&
                     typeid(*m_staticObjects[rowStaticObject][colStaticObject]) == typeid(Wall) &&
@@ -391,6 +414,29 @@ bool Stage::handleCollision(MovingObject & movingObject, const sf::Vector2f & ke
     }
 
     return collide;
+}
+//=============================================================================
+graphStaticObjects_t Stage::getStaticObject(const int &row, const int &col) const {
+
+    if(!m_staticObjects[row][col])
+        return NULL_OBJECT;
+
+    if(typeid(*m_staticObjects[row][col]) == typeid(Wall))
+        return WALL_OBJECT;
+
+    if(typeid(*m_staticObjects[row][col]) == typeid(Ladder))
+        return LADDER_OBJECT;
+
+    if(typeid(*m_staticObjects[row][col]) == typeid(Pole))
+        return POLE_OBJECT;
+
+    //In case it includes coin,player,enemy or gift.
+    return NULL_OBJECT;
+
+}
+//=============================================================================
+GameGraph & Stage::getGameGraph(){
+    return *m_graph;
 }
 //=============================================================================
 void Stage::drawMovingObject(sf::RenderWindow & window) const{
