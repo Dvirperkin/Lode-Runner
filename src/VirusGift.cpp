@@ -1,18 +1,17 @@
-#include "EnemyGift.h"
-#include "Stage.h"
-#include "Player.h"
+#include "VirusGift.h"
 
-EnemyGift::EnemyGift(const sf::Vector2f & location, const sf::Vector2i & stageSize , Stage & stage)
+VirusGift::VirusGift(const sf::Vector2f & location, const sf::Vector2i & stageSize , Stage & stage)
  : Gift(location, GIFT, stageSize){
 
     m_stage = &stage;
 }
 //=============================================================================
-void EnemyGift::activate() {
-    m_stage->addEnemy();
+void VirusGift::activate() {
+    m_stage->addVirus();
+    Sound::soundObject().playSound(VIRUS_GIFT_SOUND);
 }
 //=============================================================================
-void EnemyGift::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
+void VirusGift::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
     activate();
     isDisposed();
     player.handleCollision(*this, keyPressed);

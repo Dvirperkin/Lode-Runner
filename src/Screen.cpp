@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "Screen.h"
 
-Window::Window(){}
+Screen::Screen(){}
 //=============================================================================

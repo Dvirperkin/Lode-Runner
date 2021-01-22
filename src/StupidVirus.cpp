@@ -1,10 +1,10 @@
-#include "StupidEnemy.h"
-#include<iostream>
-StupidEnemy::StupidEnemy(const sf::Vector2f & location, const sf::Vector2i & stageSize)
- : Enemy(location, STUPID_ENEMY_TEXT, stageSize), m_direction(true)
+#include "StupidVirus.h"
+
+StupidVirus::StupidVirus(const sf::Vector2f & location, const sf::Vector2i & stageSize)
+ : Virus(location, STUPID_VIRUS_TEXT, stageSize), m_direction(true)
  {}
 //==============================================================================
-sf::Vector2f StupidEnemy::move(const float & timeElapsed) {
+sf::Vector2f StupidVirus::move(const float & timeElapsed) {
 
     if(getInTheAir() || getLocked())
         return STAND;
@@ -22,21 +22,21 @@ sf::Vector2f StupidEnemy::move(const float & timeElapsed) {
     return STAND;
 }
 //=============================================================================
-void StupidEnemy::gravity(const float & timeElapsed) {
+void StupidVirus::gravity(const float & timeElapsed) {
     setInTheAir(true);
 
     changePosition(timeElapsed, DOWN, getLastReflection());
 }
 //=============================================================================
-void StupidEnemy::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
+void StupidVirus::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void StupidEnemy::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
+void StupidVirus::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void StupidEnemy::handleCollision(Wall &wall, const sf::Vector2f &keyPressed) {
+void StupidVirus::handleCollision(Curtain &wall, const sf::Vector2f &keyPressed) {
     setInTheAir(false);
 
     if(getGlobalBounds().contains(wall.getGlobalBounds().left, wall.getGlobalBounds().top + getGlobalBounds().height) ||
@@ -55,7 +55,7 @@ void StupidEnemy::handleCollision(Wall &wall, const sf::Vector2f &keyPressed) {
         return;
     }
 
-    Enemy::handleCollision(wall, keyPressed);
+    Virus::handleCollision(wall, keyPressed);
     
     if(!getLocked() && wall.checkDisposed()) {
         setPosition(wall.getPosition());

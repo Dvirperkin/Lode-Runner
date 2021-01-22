@@ -1,31 +1,31 @@
-#include "Coin.h"
-#include "StageDetails.h"
+#include "Vaccine.h"
 
-Coin::Coin(const sf::Vector2f &location, const sf::Vector2i & stageSize, StageDetails & stageDetails)
-    : SpecialObject(location, COIN, stageSize)
+Vaccine::Vaccine(const sf::Vector2f &location, const sf::Vector2i & stageSize, StageDetails & stageDetails)
+    : SpecialObject(location, VACCINE, stageSize)
 {
     m_stageDetails = &stageDetails;
 }
 //=============================================================================
-void Coin::activate() {
+void Vaccine::activate() {
     isDisposed();
+    Sound::soundObject().playSound(VACCINE_SOUND);
     m_stageDetails->decCoin();
 }
 //=============================================================================
-void Coin::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
+void Vaccine::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
     activate();
     player.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(StupidEnemy & stupidEnemy, const sf::Vector2f & keyPressed) {
+void Vaccine::handleCollision(StupidVirus & stupidEnemy, const sf::Vector2f & keyPressed) {
     stupidEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(RandEnemy & randEnemy, const sf::Vector2f & keyPressed) {
+void Vaccine::handleCollision(RandVirus & randEnemy, const sf::Vector2f & keyPressed) {
     randEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Coin::handleCollision(SmartEnemy & smartEnemy, const sf::Vector2f & keyPressed) {
+void Vaccine::handleCollision(SmartVirus & smartEnemy, const sf::Vector2f & keyPressed) {
     smartEnemy.handleCollision(*this, keyPressed);
 }
 //=============================================================================

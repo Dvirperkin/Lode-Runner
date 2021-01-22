@@ -1,12 +1,11 @@
-#include "RandEnemy.h"
-#include <iostream>
+#include "RandVirus.h"
 
-RandEnemy::RandEnemy(const sf::Vector2f & location, const sf::Vector2i & stageSize)
- : Enemy(location, RAND_ENEMY_TEXT, stageSize)
+RandVirus::RandVirus(const sf::Vector2f & location, const sf::Vector2i & stageSize)
+ : Virus(location, RAND_VIRUS_TEXT, stageSize)
  {
  }
 //=============================================================================
-sf::Vector2f RandEnemy::move(const float & timeElapsed) {
+sf::Vector2f RandVirus::move(const float & timeElapsed) {
 
     if(getInTheAir() || getLocked())
         return STAND;
@@ -16,19 +15,19 @@ sf::Vector2f RandEnemy::move(const float & timeElapsed) {
 
     switch(step)
     {
-        case ENEMY_UP:
+        case VIRUS_UP:
             changePosition(timeElapsed, UP, REFLECTION_UP);
             return UP;
 
-        case ENEMY_DOWN:
+        case VIRUS_DOWN:
             changePosition(timeElapsed, DOWN, REFLECTION_DOWN);
             return DOWN;
 
-        case ENEMY_LEFT:
+        case VIRUS_LEFT:
             changePosition(timeElapsed, LEFT, REFLECTION_LEFT);
             return LEFT;
 
-        case ENEMY_RIGHT:
+        case VIRUS_RIGHT:
             changePosition(timeElapsed, RIGHT, REFLECTION_RIGHT);
             return RIGHT;
 
@@ -37,17 +36,17 @@ sf::Vector2f RandEnemy::move(const float & timeElapsed) {
     return STAND;
 }
 //=============================================================================
-void RandEnemy::gravity(const float &timeElapsed) {
+void RandVirus::gravity(const float &timeElapsed) {
     setInTheAir(true);
 
     changePosition(timeElapsed, DOWN, REFLECTION_RIGHT);
 }
 //=============================================================================
-void RandEnemy::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
+void RandVirus::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void RandEnemy::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
+void RandVirus::handleCollision(Player &gameObject, const sf::Vector2f &keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================

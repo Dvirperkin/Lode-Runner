@@ -1,28 +1,28 @@
-#include "Enemy.h"
-#include "Wall.h"
+#include "Virus.h"
+#include "Curtain.h"
 
-Enemy::Enemy(const sf::Vector2f &location, enum Textures_t object, const sf::Vector2i & stageSize)
+Virus::Virus(const sf::Vector2f &location, enum Textures_t object, const sf::Vector2i & stageSize)
     : MovingObject(location , object, stageSize), m_addedFromGift(false), m_locked(false)
 {
 }
 //=============================================================================
-void Enemy::setLock() {
+void Virus::setLock() {
     m_locked = !m_locked;
 }
 //=============================================================================
-void Enemy::setAddedFromGift() {
+void Virus::setAddedFromGift() {
     m_addedFromGift = true;
 }
 //=============================================================================
-bool Enemy::getAddedFromGift() const{
+bool Virus::getAddedFromGift() const{
     return m_addedFromGift;
 }
 //=============================================================================
-bool Enemy::getLocked() const {
+bool Virus::getLocked() const {
     return m_locked;
 }
 //=============================================================================
-void Enemy::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
+void Virus::handleCollision(Curtain & wall, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
 
     if(!wall.checkDisposed())
@@ -36,7 +36,7 @@ void Enemy::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
     else if(getLocked())
     {
         if(!wall.checkDisposed()) {
-            setPosition({getPosition().x, getPosition().y - getGlobalBounds().height - OFFSET_Y});
+            setPosition({getPosition().x, getPosition().y - getGlobalBounds().height - (OFFSET_Y * 2)});
             setLock();
         }
     }

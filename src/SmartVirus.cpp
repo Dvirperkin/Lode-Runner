@@ -1,25 +1,25 @@
-#include "SmartEnemy.h"
+#include "SmartVirus.h"
 #include "Stage.h"
 
-SmartEnemy::SmartEnemy(const sf::Vector2f & location, Stage & stage)
- : Enemy(location, SMART_ENEMY_TEXT, stage.getStageSize()), m_stage(&stage), m_firstRun(true), m_time(0)
+SmartVirus::SmartVirus(const sf::Vector2f & location, Stage & stage)
+ : Virus(location, SMART_VIRUS_TEXT, stage.getStageSize()), m_stage(&stage), m_firstRun(true), m_time(0)
  {
      m_timeLimit = (m_stage->getStageSize().x + m_stage->getStageSize().y > STAGE_SIZE_FACTOR ? SMALL_TIME_LIMIT : BIG_TIME_LIMIT);
  }
 //=============================================================================
-sf::Vector2f SmartEnemy::move(const float &timeElapsed){
+sf::Vector2f SmartVirus::move(const float &timeElapsed){
 
     m_time += timeElapsed;
 
-    // set the last array position
+    //Set the last array position.
     auto lastArrPosition =  sf::Vector2i((getLastPosition().x / WINDOW_WIDTH) * m_stage->getStageSize().x ,
                                          ((getLastPosition().y - STAGE_DETAILS_SIZE) / (WINDOW_HEIGHT - STAGE_DETAILS_SIZE)) * m_stage->getStageSize().y);
-    // set the current array position
+    //Set the current array position.
     auto currentArrPosition = sf::Vector2i((getPosition().x / WINDOW_WIDTH) * m_stage->getStageSize().x ,
                                            ((getPosition().y - STAGE_DETAILS_SIZE) / (WINDOW_HEIGHT - STAGE_DETAILS_SIZE)) * m_stage->getStageSize().y);
     m_currPair = {lastArrPosition, currentArrPosition};
 
-    // used to set the last directionAndObj (enemy last position and enemy current position)
+    //Use to set the last directionAndObj (enemy last position and enemy current position).
     if (m_firstRun) {
         m_lastPair = m_currPair;
         m_firstRun = false;
@@ -30,22 +30,25 @@ sf::Vector2f SmartEnemy::move(const float &timeElapsed){
     auto direction = directionAndObj.first;
     auto object = directionAndObj.second;
 
-    if (m_currPair != m_lastPair) { // the enemy managed to move
+    //The enemy managed to move.
+    if (m_currPair != m_lastPair) {
         m_lastPair = m_currPair;
         m_time = 0;
     }
 
-        // need to set a factor to m_time
-    else if (m_currPair == m_lastPair && (m_time > m_timeLimit)) // the enemy did not manage to move - got stuck
-    {
-        if (object == NULL_OBJECT) { // on the air (trying to get down)
-            //check if in the left bottom diagonal there is a wall if so - we need to move right.
-            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x - 1, currentArrPosition.y + 1}) == WALL_OBJECT) {
+    //The enemy did not manage to move - got stuck.
+    else if (m_currPair == m_lastPair && (m_time > m_timeLimit)){
+
+        //On the air (trying to get down).
+        if (object == NULL_OBJECT) {
+            //Check if on the left bottom diagonal there is a curtain if so - it need to move right.
+            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x - 1, currentArrPosition.y + 1}) == CURTAIN_OBJECT) {
                 changePosition(timeElapsed, RIGHT, REFLECTION_UP);
                 return RIGHT;
             }
-            //check if in the right bottom diagonal there is a wall if so - we need to move left.
-            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x + 1, currentArrPosition.y + 1}) == WALL_OBJECT)
+
+            //Check if on the right bottom diagonal there is a curtain if so - it need to move left.
+            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x + 1, currentArrPosition.y + 1}) == CURTAIN_OBJECT)
             {
                 changePosition(timeElapsed, LEFT, REFLECTION_UP);
                 return LEFT;
@@ -53,20 +56,22 @@ sf::Vector2f SmartEnemy::move(const float &timeElapsed){
         }
 
         else if (object == LADDER_OBJECT) {
-            //if in the left/right bottom diagonal there is a wall if so - we need to go up.
-            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x - 1, currentArrPosition.y + 1}) == WALL_OBJECT
-                || m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x + 1, currentArrPosition.y + 1}) == WALL_OBJECT) {
-                // if on the left/right diagonal has well then we are going up
+            //If on the left/right bottom diagonal there is a wall if so - it's need to go up.
+            if (m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x - 1, currentArrPosition.y + 1}) == CURTAIN_OBJECT
+                || m_stage->getGameGraph().getObjectInPosition({currentArrPosition.x + 1, currentArrPosition.y + 1}) == CURTAIN_OBJECT) {
+                //If on the left/right diagonal has well then it's going up.
                 changePosition(timeElapsed, UP, REFLECTION_UP);
                 return UP;
             }
+
             else {
                 changePosition(timeElapsed, DOWN, REFLECTION_UP);
                 return DOWN;
             }
         }
     }
-    //if not stuck.
+
+    //If not stuck.
     if (direction == LEFT) {
         changePosition(timeElapsed, LEFT, REFLECTION_LEFT);
         return LEFT;
@@ -83,17 +88,17 @@ sf::Vector2f SmartEnemy::move(const float &timeElapsed){
     return STAND;
 }
 //=============================================================================
-void SmartEnemy::gravity(const float & timeElapsed){
+void SmartVirus::gravity(const float & timeElapsed){
     setInTheAir(true);
 
     changePosition(timeElapsed, DOWN, REFLECTION_RIGHT);
 }
 //=============================================================================
-void SmartEnemy::handleCollision(GameObject & gameObject, const sf::Vector2f & keyPressed) {
+void SmartVirus::handleCollision(GameObject & gameObject, const sf::Vector2f & keyPressed) {
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void SmartEnemy::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
+void SmartVirus::handleCollision(Player & player, const sf::Vector2f & keyPressed) {
     player.handleCollision(*this, keyPressed);
 }
 //=============================================================================
