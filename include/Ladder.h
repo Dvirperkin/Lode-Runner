@@ -1,31 +1,24 @@
 #pragma once
 
 #include "StaticObject.h"
-#include "StaticObject.h"
 #include "Player.h"
-#include "StupidEnemy.h"
-#include "RandEnemy.h"
-#include "SmartEnemy.h"
-#include "Coin.h"
-#include "Wall.h"
-#include "Pole.h"
-#include "LiveGift.h"
-#include "ScoreGift.h"
-#include "TimeGift.h"
-#include "EnemyGift.h"
+#include "StupidVirus.h"
+#include "RandVirus.h"
+#include "SmartVirus.h"
 
 class Ladder : public StaticObject {
 
 public:
+    //--------------------Constructor/Destructor Section--------------------
     Ladder(const sf::Vector2f &, const sf::Vector2i &);
 
-    using StaticObject::handleCollision;
-
+    //--------------------Virtual Function Section--------------------
     //---Collision Function Section---
+    using StaticObject::handleCollision;
     virtual void handleCollision(Player &, const sf::Vector2f &) override;
-    virtual void handleCollision(StupidEnemy &, const sf::Vector2f &) override;
-    virtual void handleCollision(RandEnemy &, const sf::Vector2f &) override;
-    virtual void handleCollision(SmartEnemy &, const sf::Vector2f &) override;
+    virtual void handleCollision(StupidVirus &, const sf::Vector2f &) override;
+    virtual void handleCollision(RandVirus &, const sf::Vector2f &) override;
+    virtual void handleCollision(SmartVirus &, const sf::Vector2f &) override;
 
 private:
 

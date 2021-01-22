@@ -22,20 +22,25 @@ struct NodesData {
 class GameGraph {
 
 public:
+    //--------------------Constructor/Destructor Section--------------------
     GameGraph(Stage &);
+
+    //--------------------Action Function Section--------------------
     void initializeData ();
     void BFS (const sf::Vector2i &);
+
+    //--------------------Get Function Section--------------------
     const graphStaticObjects_t& getObjectInPosition(const sf::Vector2i&);//used to get the object in the current position.
     std::pair<sf::Vector2f , graphStaticObjects_t> getDirectionAndObj(const sf::Vector2f&);
 
 private:
+    std::vector<NodesData> m_graph;
+    Stage * m_stage;
+
     void initializeGraph();
-    const int convertCellToNode (const int & , const int &) const;
     void addNeighbors ();
     const sf::Vector2i convertNodeToCell (const int &) const;
     const sf::Vector2i getPosInArr(const sf::Vector2f&) const;
-
-    std::vector<NodesData> m_graph;
-    Stage * m_stage;
+    const int convertCellToNode (const int & , const int &) const;
 };
 

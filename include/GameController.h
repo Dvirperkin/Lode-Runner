@@ -4,18 +4,18 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include "Macros.h"
-#include "Window.h"
+#include "Screen.h"
 #include "MainMenu.h"
 #include "Stage.h"
 
-//#include "StageConstruction.h"
 
 class GameController {
 public:
+    //--------------------Constructor/Destructor Section--------------------
     GameController();
     void Run();
 
 private:
-    std::vector<std::unique_ptr<Window>> m_screens;
+    std::vector<std::unique_ptr<Screen>> m_screens;
     enum ScreenType_t m_currentScreen;
 };

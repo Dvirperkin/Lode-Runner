@@ -2,27 +2,33 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "Macros.h"
-#include "Font.h"
 #include "Textures.h"
+#include "Font.h"
+#include "Sound.h"
 
 class Player;
 
 class StageDetails {
 public:
+    //--------------------Constructor/Destructor Section--------------------
     StageDetails();
+
+    //--------------------Action Function Section--------------------
     void draw(sf::RenderWindow &, Player &);
     void reloadStageDetails();
-
-    int getCoin() const;
-    int getTimer() const;
-    void setStageNumber(const int);
-    void setTimer(const int);
-
     void incCoin();
     void decCoin();
     void resetMaxCoin();
     void addTime();
     void updateTimer(float);
+
+    //--------------------Get Function Section--------------------
+    int getCoin() const;
+    int getTimer() const;
+
+    //--------------------Set Function Section--------------------
+    void setStageNumber(const int);
+    void setTimer(const int);
 
 private:
     sf::Sprite m_backGround;
