@@ -9,31 +9,27 @@ void StaticObject::handleCollision(GameObject & gameObject, const sf::Vector2f &
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(Player & player, const sf::Vector2f &keyPressed) {
+void StaticObject::handleCollision(StupidVirus & stupidEnemy, const sf::Vector2f &keyPressed) {
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(StupidEnemy & stupidEnemy, const sf::Vector2f &keyPressed) {
+void StaticObject::handleCollision(RandVirus & randEnemy, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(RandEnemy & randEnemy, const sf::Vector2f & keyPressed) {
+void StaticObject::handleCollision(SmartVirus & smartEnemy, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(SmartEnemy & smartEnemy, const sf::Vector2f & keyPressed) {
+void StaticObject::handleCollision(Vaccine & coin, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(Coin & coin, const sf::Vector2f & keyPressed) {
+void StaticObject::handleCollision(Curtain & wall, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
-    /*ignore*/
-}
-//=============================================================================
-void StaticObject::handleCollision(Pole & pole, const sf::Vector2f & keyPressed) {
+void StaticObject::handleCollision(Rope & pole, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================
@@ -53,7 +49,7 @@ void StaticObject::handleCollision(TimeGift & timeGift, const sf::Vector2f & key
     /*ignore*/
 }
 //=============================================================================
-void StaticObject::handleCollision(EnemyGift & enemyGift, const sf::Vector2f & keyPressed) {
+void StaticObject::handleCollision(VirusGift & enemyGift, const sf::Vector2f & keyPressed) {
     /*ignore*/
 }
 //=============================================================================

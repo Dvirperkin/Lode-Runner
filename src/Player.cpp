@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Stage.h"
-#include <iostream>
 
 Player::Player() {}
 //=============================================================================
@@ -15,6 +14,7 @@ sf::Vector2f Player::move(const float &timeElapsed)
         return STAND;
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+        Sound::soundObject().playSound(VIRUS_COLLISION);
         isDisposed();
         m_lives--;
     }
@@ -96,7 +96,7 @@ void Player::addScore(int score) {
         m_score += score;
 }
 //=============================================================================
-void Player::enemyCollision(const Enemy & enemy, const sf::Vector2f & keyPressed) {
+void Player::enemyCollision(const Virus & enemy, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
 
     if(enemy.getLocked()) {
@@ -104,7 +104,7 @@ void Player::enemyCollision(const Enemy & enemy, const sf::Vector2f & keyPressed
         return;
     }
 
-    Sound::soundObject().playSound(ENEMY_COLLISION);
+    Sound::soundObject().playSound(VIRUS_COLLISION);
     isDisposed();
     m_lives--;
 }
@@ -116,26 +116,26 @@ void Player::handleCollision(GameObject &gameObject, const sf::Vector2f &keyPres
     gameObject.handleCollision(*this, keyPressed);
 }
 //=============================================================================
-void Player::handleCollision(StupidEnemy & stupidEnemy, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(StupidVirus & stupidEnemy, const sf::Vector2f & keyPressed) {
     enemyCollision(stupidEnemy, keyPressed);
 }
 //=============================================================================
-void Player::handleCollision(RandEnemy & randEnemy, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(RandVirus & randEnemy, const sf::Vector2f & keyPressed) {
     enemyCollision(randEnemy, keyPressed);
 }
 //=============================================================================
-void Player::handleCollision(SmartEnemy & smartEnemy, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(SmartVirus & smartEnemy, const sf::Vector2f & keyPressed) {
     enemyCollision(smartEnemy, keyPressed);
 }
 //=============================================================================
-void Player::handleCollision(Coin & coin, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(Vaccine & coin, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
     setOnPole(false);
 
     m_score += m_level * COIN_SCORE;
 }
 //=============================================================================
-void Player::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(Curtain & wall, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
 
     if(!wall.checkDisposed()) {
@@ -143,6 +143,7 @@ void Player::handleCollision(Wall & wall, const sf::Vector2f & keyPressed) {
             isDisposed();
             m_lives--;
         }
+
         setLastPosition();
     }
 }
@@ -162,7 +163,7 @@ void Player::handleCollision(TimeGift & timeGift, const sf::Vector2f & keyPresse
     setOnPole(false);
 }
 //=============================================================================
-void Player::handleCollision(EnemyGift &, const sf::Vector2f & keyPressed) {
+void Player::handleCollision(VirusGift &, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
     setOnPole(false);
 }

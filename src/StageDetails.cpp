@@ -98,8 +98,13 @@ void StageDetails::drawTime(sf::RenderWindow & window) {
     auto x = (WINDOW_WIDTH / NUM_OF_DETAILS) * TIME_DETAIL + (WINDOW_WIDTH / NUM_OF_DETAILS) / 2;
     m_details[TIME_DETAIL].setPosition(x ,STAGE_DETAILS_SIZE / 4);
 
-    if(m_countDown < 10)
+    if(m_countDown < 10) {
+        if(!Sound::soundObject().checkSoundPlay(LOW_TIME))
+            Sound::soundObject().playSound(LOW_TIME);
+
         m_details[TIME_DETAIL].setFillColor(sf::Color::Red);
+
+    }
     else
         m_details[TIME_DETAIL].setFillColor(sf::Color::White);
 
@@ -143,7 +148,8 @@ void StageDetails::resetMaxCoin() {
 }
 //===========================================================================
 void StageDetails::addTime() {
-    m_countDown += ADD_TIME;
+    if(m_countDown > NO_TIME)
+        m_countDown += ADD_TIME;
 }
 //===========================================================================
 void StageDetails::updateTimer(float elapsedTime) {

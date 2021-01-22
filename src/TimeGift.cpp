@@ -1,5 +1,5 @@
 #include "TimeGift.h"
-#include "Player.h"
+
 
 TimeGift::TimeGift(const sf::Vector2f & location, const sf::Vector2i & stageSize, StageDetails & stageDetails)
  : Gift(location, GIFT, stageSize){
@@ -8,6 +8,7 @@ TimeGift::TimeGift(const sf::Vector2f & location, const sf::Vector2i & stageSize
 //=============================================================================
 void TimeGift::activate() {
     m_stageDetails->addTime();
+    Sound::soundObject().playSound(TIME_GIFT_SOUND);
 }
 //=============================================================================
 void TimeGift::handleCollision(Player & player, const sf::Vector2f & keyPressed) {

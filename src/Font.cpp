@@ -2,7 +2,7 @@
 
 Font::Font()
 {
-    if(!m_font.loadFromFile("C:/Windows/Fonts/Arial.ttf"))
+    if(!m_font.loadFromFile("Impact.ttf"))
         exit(EXIT_FAILURE);
 }
 //=============================================================================

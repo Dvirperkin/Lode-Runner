@@ -54,7 +54,7 @@ void GameObject::changeSize(float factorY, float factorX){
     m_objectSize.y = m_sprite.getScale().y *  m_sprite.getTexture()->getSize().y;
 }
 //=============================================================================
-void GameObject::setFirstPosition() {
+void GameObject::returnFirstPosition() {
     m_sprite.setPosition(m_firstPosition);
 }
 //=============================================================================
@@ -62,6 +62,10 @@ void GameObject::setPosition(const sf::Vector2f & position) {
     m_lastPosition = m_sprite.getPosition();
     m_sprite.setPosition(position);
     m_position = m_sprite.getPosition();
+}
+//=============================================================================
+void GameObject::setLastPosition() {
+    m_sprite.setPosition(m_lastPosition);
 }
 //=============================================================================
 void GameObject::changePosition(const float & timeElapsed, const sf::Vector2f & direction, const sf::Vector2f & reflection){
@@ -84,10 +88,6 @@ void GameObject::changePosition(const float & timeElapsed, const sf::Vector2f & 
 
         m_lastReflection = reflection;
     }
-}
-//=============================================================================
-void GameObject::setLastPosition() {
-    m_sprite.setPosition(m_lastPosition);
 }
 //=============================================================================
 void GameObject::isDisposed() {

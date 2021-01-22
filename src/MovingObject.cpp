@@ -1,15 +1,15 @@
 #include "MovingObject.h"
 #include "Player.h"
-#include "StupidEnemy.h"
-#include "RandEnemy.h"
-#include "SmartEnemy.h"
-#include "Coin.h"
-#include "Pole.h"
+#include "StupidVirus.h"
+#include "RandVirus.h"
+#include "SmartVirus.h"
+#include "Vaccine.h"
+#include "Rope.h"
 #include "Ladder.h"
 #include "LiveGift.h"
 #include "ScoreGift.h"
 #include "TimeGift.h"
-#include "EnemyGift.h"
+#include "VirusGift.h"
 
 
 MovingObject::MovingObject(const sf::Vector2f &location, enum Textures_t object, const sf::Vector2i & stageSize)
@@ -50,19 +50,19 @@ void MovingObject::handleCollision(Player & player, const sf::Vector2f &keyPress
     /*ignore*/
 }
 //=============================================================================
-void MovingObject::handleCollision(StupidEnemy &gameObject, const sf::Vector2f &) {
+void MovingObject::handleCollision(StupidVirus &gameObject, const sf::Vector2f &) {
     /*ignore*/
 }
 //=============================================================================
-void MovingObject::handleCollision(RandEnemy &gameObject, const sf::Vector2f &) {
+void MovingObject::handleCollision(RandVirus &gameObject, const sf::Vector2f &) {
     /*ignore*/
 }
 //=============================================================================
-void MovingObject::handleCollision(SmartEnemy &gameObject, const sf::Vector2f &) {
+void MovingObject::handleCollision(SmartVirus &gameObject, const sf::Vector2f &) {
     /*ignore*/
 }
 //=============================================================================
-void MovingObject::handleCollision(Coin &gameObject, const sf::Vector2f & keyPressed) {
+void MovingObject::handleCollision(Vaccine &gameObject, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
     setOnPole(false);
 
@@ -71,14 +71,14 @@ void MovingObject::handleCollision(Coin &gameObject, const sf::Vector2f & keyPre
     }
 }
 //=============================================================================
-void MovingObject::handleCollision(Wall & wall, const sf::Vector2f &) {
+void MovingObject::handleCollision(Curtain & wall, const sf::Vector2f &) {
     setInTheAir(false);
 
     if(!wall.checkDisposed())
         setLastPosition();
 }
 //=============================================================================
-void MovingObject::handleCollision(Pole &gameObject, const sf::Vector2f & keyPressed) {
+void MovingObject::handleCollision(Rope &gameObject, const sf::Vector2f & keyPressed) {
     setInTheAir(false);
     //setOnLadder(false);
 
@@ -155,7 +155,7 @@ void MovingObject::handleCollision(TimeGift &, const sf::Vector2f & keyPressed) 
     }
 }
 //=============================================================================
-void MovingObject::handleCollision(EnemyGift &, const sf::Vector2f & keyPressed) {
+void MovingObject::handleCollision(VirusGift &, const sf::Vector2f & keyPressed) {
     setOnLadder(false);
     setOnPole(false);
 
